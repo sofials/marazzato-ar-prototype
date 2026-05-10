@@ -24,10 +24,16 @@
 
   <!-- Schermata intro -->
   <div id="intro">
-    <h1>THREE TIMELINES</h1>
-    <p class="subtitle">Una cornice. Tre tempi.</p>
-    <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra il marker sul plinto.</p>
-    <button id="start-btn">INIZIA</button>
+    <div class="intro-card">
+      <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
+
+      <h1>THREE TIMELINES</h1>
+      <p class="subtitle">Scopri le storie oltre la cenere </p>
+
+      <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra i marker presenti in sala.</p>
+
+      <button id="start-btn">INIZIA</button>
+    </div>
   </div>
 
   <!-- Hint quando cerca il marker -->
@@ -68,8 +74,6 @@
            device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- Modello 3D: solo la cornice esterna -->
-      <a-asset-item id="frame-model" src="models/cornice.glb" scale="100 100 100"></a-asset-item>
       
       <!-- Texture pre-caricate in memoria per swap istantaneo -->
       <img id="tex-past" src="textures/past.jpg">
@@ -88,9 +92,6 @@
       
       <!-- L'entità che gestisce il cambio material è un componente custom 'frame-state-manager' -->
       <a-entity id="frame-wrapper" scale="1 1 1" position="0 0 0" rotation="0 0 0" frame-state-manager="state: present">
-        
-        <!-- Mesh Cornice -->
-        <a-gltf-model src="#frame-model"></a-gltf-model>
         
         <!-- Plane per la Foto (Z leggermente arretrato per stare dentro la cornice. Aggiusta width/height in base alla cornice) -->
         <a-plane id="photo-plane" src="#tex-present" position="0 0 -0.01" width="1.2" height="0.8" material="shader: flat;"></a-plane>
