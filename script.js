@@ -5,63 +5,15 @@ AFRAME.registerComponent('frame-state-manager', {
     state: { type: 'string', default: 'present' }
   },
 
-  init: function () {
-    this.meshLoaded = false;
-    // Ascolta quando il .glb ha finito di caricare
-    this.el.addEventListener('model-loaded', () => {
-      this.meshLoaded = true;
-      this.updateMaterials();
-    });
-  },
-
   update: function () {
-    this.updateMaterials();
-  },
-
-updateMaterials: function () {
     const state = this.data.state;
     const photoPlane = document.getElementById('photo-plane');
+    if (!photoPlane) return;
 
-    // 1. CAMBIO FOTO ISTANTANEO (ora non si blocca più)
     switch (state) {
-      case 'past':
-        photoPlane.setAttribute('src', '#tex-past');
-        break;
-      case 'future':
-        photoPlane.setAttribute('src', '#tex-future');
-        break;
-      case 'present':
-      default:
-        photoPlane.setAttribute('src', '#tex-present');
-        break;
-    }
-
-    // 2. CAMBIO MATERIALE CORNICE (se il 3D è pronto)
-    const gltfEl = this.el.querySelector('a-gltf-model');
-    if (!gltfEl) return;
-    
-    const mesh = gltfEl.getObject3D('mesh');
-    if (mesh) {
-      let frameColor, frameRoughness;
-      if (state === 'past') {
-        frameColor = new THREE.Color('#6b4423');
-        frameRoughness = 0.7;
-      } else if (state === 'future') {
-        frameColor = new THREE.Color('#c9a87c');
-        frameRoughness = 0.5;
-      } else {
-        frameColor = new THREE.Color('#1a1a1a');
-        frameRoughness = 1.0;
-      }
-
-      mesh.traverse((node) => {
-        if (node.isMesh && node.material) {
-          node.material.color = frameColor;
-          node.material.roughness = frameRoughness;
-          node.material.metalness = 0;
-          node.material.needsUpdate = true;
-        }
-      });
+      case 'past':    photoPlane.setAttribute('src', '#tex-past');    break;
+      case 'future':  photoPlane.setAttribute('src', '#tex-future');  break;
+      default:        photoPlane.setAttribute('src', '#tex-present'); break;
     }
   }
 });
