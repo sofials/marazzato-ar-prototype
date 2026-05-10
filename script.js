@@ -15,9 +15,7 @@ AFRAME.registerComponent('frame-state-manager', {
   },
 
   update: function () {
-    if (this.meshLoaded) {
-      this.updateMaterials();
-    }
+    this.updateMaterials();
   },
 
 updateMaterials: function () {
