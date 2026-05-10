@@ -1,182 +1,194 @@
-// === ELEMENTI DOM ===
-const startBtn = document.getElementById('start-btn');
-const intro = document.getElementById('intro');
-const scanHint = document.getElementById('scan-hint');
-const dial = document.getElementById('timeline-dial');
-const dialSvg = document.getElementById('dial-svg');
-const needle = document.getElementById('needle');
-const dialLabel = document.getElementById('dial-label');
-const sceneEl = document.querySelector('a-scene');
-const placeholder = document.getElementById('placeholder');
-const targetEntity = document.querySelector('[mindar-image-target]');
+// === COMPONENTE A-FRAME PER MATERIAL MANAGEMENT ===
+// Da registrare PRIMA del caricamento della scena
+AFRAME.registerComponent('frame-state-manager', {
+  schema: {
+    state: { type: 'string', default: 'present' }
+  },
 
-const tickPast = document.getElementById('tick-past');
-const tickPresent = document.getElementById('tick-present');
-const tickFuture = document.getElementById('tick-future');
+  init: function () {
+    this.meshLoaded = false;
+    // Ascolta quando il .glb ha finito di caricare
+    this.el.addEventListener('model-loaded', () => {
+      this.meshLoaded = true;
+      this.updateMaterials();
+    });
+  },
 
-// === STATO ===
-const colors = {
-  past: '#A3BCA0',
-  present: '#C72A09',
-  future: '#D34C3D'
-};
+  update: function () {
+    if (this.meshLoaded) {
+      this.updateMaterials();
+    }
+  },
 
-// Angoli della lancetta per ogni timeline (gradi, 0 = verticale verso l'alto)
-// -90 = sinistra (passato), 0 = alto (presente), 90 = destra (futuro)
-const angles = {
-  past: -90,
-  present: 0,
-  future: 90
-};
+  updateMaterials: function () {
+    const state = this.data.state;
+    const mesh = this.el.getObject3D('mesh');
+    const photoPlane = document.getElementById('photo-plane');
 
-const labels = {
-  past: 'PASSATO',
-  present: 'PRESENTE',
-  future: 'FUTURO'
-};
+    if (!mesh) return;
 
-let currentTimeline = 'present';
-let isDragging = false;
-let currentAngle = 0;
+    // Definisci i materiali di Three.js in base allo stato
+    let frameColor, frameRoughness;
 
-// === AVVIO AR ===
-startBtn.addEventListener('click', async () => {
-  intro.classList.add('hidden');
-  scanHint.classList.remove('hidden');
+    switch (state) {
+      case 'past':
+        frameColor = new THREE.Color('#6b4423');
+        frameRoughness = 0.7;
+        photoPlane.setAttribute('src', '#tex-past');
+        break;
+      case 'future':
+        frameColor = new THREE.Color('#c9a87c');
+        frameRoughness = 0.5;
+        photoPlane.setAttribute('src', '#tex-future');
+        break;
+      case 'present':
+      default:
+        frameColor = new THREE.Color('#1a1a1a');
+        frameRoughness = 1.0;
+        photoPlane.setAttribute('src', '#tex-present');
+        break;
+    }
 
-  const arSystem = sceneEl.systems['mindar-image-system'];
-  await arSystem.start();
+    // Naviga dentro il .glb e sovrascrive il materiale della cornice
+    mesh.traverse((node) => {
+      if (node.isMesh) {
+        // Se il modello ha materiali multipli, ci assicuriamo che abbiano le proprietà standard
+        node.material.color = frameColor;
+        node.material.roughness = frameRoughness;
+        node.material.metalness = 0; // Come da tue specifiche
+        node.material.needsUpdate = true;
+      }
+    });
+  }
 });
 
-targetEntity.addEventListener('targetFound', () => {
-  console.log('Marker trovato!');
-  scanHint.classList.add('hidden');
-  dial.classList.remove('hidden');
-  applyTimeline('present');
-});
+// === GESTIONE UI DOM ===
+document.addEventListener("DOMContentLoaded", () => {
+  const startBtn = document.getElementById('start-btn');
+  const intro = document.getElementById('intro');
+  const scanHint = document.getElementById('scan-hint');
+  const dial = document.getElementById('timeline-dial');
+  const dialSvg = document.getElementById('dial-svg');
+  const needle = document.getElementById('needle');
+  const dialLabel = document.getElementById('dial-label');
+  const sceneEl = document.querySelector('a-scene');
+  const targetEntity = document.getElementById('ar-target');
+  const frameWrapper = document.getElementById('frame-wrapper');
 
-// === LOGICA GHIERA ===
+  const tickPast = document.getElementById('tick-past');
+  const tickPresent = document.getElementById('tick-present');
+  const tickFuture = document.getElementById('tick-future');
 
-// Calcola l'angolo dato un punto (x,y) relativo al centro della ghiera (120,120)
-function angleFromPoint(x, y) {
-  // SVG ha y verso il basso, quindi invertiamo per avere "alto = 0°"
-  const dx = x - 120;
-  const dy = 120 - y;
-  // Math.atan2 dà l'angolo in radianti rispetto all'asse x
-  // Lo convertiamo in gradi e ruotiamo così che "alto" = 0°
-  let angle = Math.atan2(dx, dy) * (180 / Math.PI);
-  // Vincoliamo tra -90 e 90 (semicerchio superiore)
-  if (angle < -90) angle = -90;
-  if (angle > 90) angle = 90;
-  return angle;
-}
+  // Angoli lancetta (gradi)
+  const angles = { past: -90, present: 0, future: 90 };
+  const labels = { past: 'PASSATO', present: 'PRESENTE', future: 'FUTURO' };
 
-// Converte coordinate cliente del touch/mouse in coordinate SVG
-function getSvgCoords(clientX, clientY) {
-  const rect = dialSvg.getBoundingClientRect();
-  const x = ((clientX - rect.left) / rect.width) * 240;
-  const y = ((clientY - rect.top) / rect.height) * 140;
-  return { x, y };
-}
+  let currentTimeline = 'present';
+  let isDragging = false;
+  let currentAngle = 0;
 
-// Applica un angolo alla lancetta (rotazione visiva)
-function setNeedleAngle(angle, animate = true) {
-  needle.style.transition = animate
-    ? 'transform 0.25s cubic-bezier(0.4, 1.4, 0.6, 1)'
-    : 'none';
-  needle.style.transform = `rotate(${angle}deg)`;
-  currentAngle = angle;
-}
+  // === AVVIO AR ===
+  startBtn.addEventListener('click', async () => {
+    intro.classList.add('hidden');
+    scanHint.classList.remove('hidden');
 
-// Trova la timeline più vicina a un dato angolo
-function timelineFromAngle(angle) {
-  if (angle < -45) return 'past';
-  if (angle > 45) return 'future';
-  return 'present';
-}
+    const arSystem = sceneEl.systems['mindar-image-system'];
+    await arSystem.start();
+  });
 
-// Applica una timeline (cambia colore cubo + UI)
-function applyTimeline(timeline) {
-  currentTimeline = timeline;
+  // Mostra UI solo al primo riconoscimento del marker
+  targetEntity.addEventListener('targetFound', () => {
+    scanHint.classList.add('hidden');
+    dial.classList.remove('hidden');
+  });
 
-  // Cambia colore del placeholder 3D
-  placeholder.setAttribute('color', colors[timeline]);
+  targetEntity.addEventListener('targetLost', () => {
+    // Opzionale: puoi rimettere l'hint se perde il target
+    scanHint.classList.remove('hidden');
+    dial.classList.add('hidden');
+  });
 
-  // Aggiorna label
-  dialLabel.textContent = labels[timeline];
+  // === LOGICA GHIERA (Ottimizzata) ===
+  function angleFromPoint(x, y) {
+    const dx = x - 120;
+    const dy = 120 - y;
+    let angle = Math.atan2(dx, dy) * (180 / Math.PI);
+    if (angle < -90) angle = -90;
+    if (angle > 90) angle = 90;
+    return angle;
+  }
 
-  // Aggiorna tacche attive
-  tickPast.classList.toggle('active', timeline === 'past');
-  tickPresent.classList.toggle('active', timeline === 'present');
-  tickFuture.classList.toggle('active', timeline === 'future');
-}
+  function getSvgCoords(clientX, clientY) {
+    const rect = dialSvg.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 240;
+    const y = ((clientY - rect.top) / rect.height) * 140;
+    return { x, y };
+  }
 
-// === EVENT HANDLERS DRAG ===
+  function setNeedleAngle(angle, animate = true) {
+    needle.style.transition = animate ? 'transform 0.25s cubic-bezier(0.4, 1.4, 0.6, 1)' : 'none';
+    needle.style.transform = `rotate(${angle}deg)`;
+    currentAngle = angle;
+  }
 
-function startDrag(clientX, clientY) {
-  isDragging = true;
-  const { x, y } = getSvgCoords(clientX, clientY);
-  const angle = angleFromPoint(x, y);
-  setNeedleAngle(angle, false);
-}
+  function timelineFromAngle(angle) {
+    if (angle < -45) return 'past';
+    if (angle > 45) return 'future';
+    return 'present';
+  }
 
-function moveDrag(clientX, clientY) {
-  if (!isDragging) return;
-  const { x, y } = getSvgCoords(clientX, clientY);
-  const angle = angleFromPoint(x, y);
-  setNeedleAngle(angle, false);
+  function applyTimeline(timeline) {
+    if (currentTimeline === timeline) return;
+    currentTimeline = timeline;
 
-  // Aggiornamento "live" dello stato mentre trascini
-  const timeline = timelineFromAngle(angle);
-  if (timeline !== currentTimeline) {
+    // Aggiorna l'entità A-Frame! Il componente reagirà e cambierà texture/material
+    frameWrapper.setAttribute('frame-state-manager', `state: ${timeline}`);
+
+    // Aggiorna Label e Classi
+    dialLabel.textContent = labels[timeline];
+    
+    tickPast.classList.toggle('active', timeline === 'past');
+    tickPresent.classList.toggle('active', timeline === 'present');
+    tickFuture.classList.toggle('active', timeline === 'future');
+  }
+
+  // === EVENT HANDLERS DRAG ===
+  function startDrag(clientX, clientY) {
+    isDragging = true;
+    const { x, y } = getSvgCoords(clientX, clientY);
+    setNeedleAngle(angleFromPoint(x, y), false);
+  }
+
+  function moveDrag(clientX, clientY) {
+    if (!isDragging) return;
+    const { x, y } = getSvgCoords(clientX, clientY);
+    const angle = angleFromPoint(x, y);
+    setNeedleAngle(angle, false);
+    
+    // Feedback real-time opzionale: se l'utente supera la soglia, scatta lo swap in AR
+    applyTimeline(timelineFromAngle(angle));
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    const timeline = timelineFromAngle(currentAngle);
+    setNeedleAngle(angles[timeline], true);
     applyTimeline(timeline);
   }
-}
 
-function endDrag() {
-  if (!isDragging) return;
-  isDragging = false;
+  // Mouse
+  dialSvg.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+  window.addEventListener('mouseup', endDrag);
 
-  // Snap all'angolo della timeline più vicina
-  const timeline = timelineFromAngle(currentAngle);
-  setNeedleAngle(angles[timeline], true);
-  applyTimeline(timeline);
-}
+  // Touch
+  dialSvg.addEventListener('touchstart', (e) => { e.preventDefault(); startDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  window.addEventListener('touchmove', (e) => { if (!isDragging) return; e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  window.addEventListener('touchend', endDrag);
 
-// Mouse events (desktop / debug)
-dialSvg.addEventListener('mousedown', (e) => {
-  e.preventDefault();
-  startDrag(e.clientX, e.clientY);
-});
-window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
-window.addEventListener('mouseup', endDrag);
-
-// Touch events (mobile)
-dialSvg.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  const t = e.touches[0];
-  startDrag(t.clientX, t.clientY);
-}, { passive: false });
-
-window.addEventListener('touchmove', (e) => {
-  if (!isDragging) return;
-  e.preventDefault();
-  const t = e.touches[0];
-  moveDrag(t.clientX, t.clientY);
-}, { passive: false });
-
-window.addEventListener('touchend', endDrag);
-
-// Tap diretto su una tacca (fallback senza drag)
-tickPast.addEventListener('click', () => {
-  setNeedleAngle(angles.past, true);
-  applyTimeline('past');
-});
-tickPresent.addEventListener('click', () => {
-  setNeedleAngle(angles.present, true);
-  applyTimeline('present');
-});
-tickFuture.addEventListener('click', () => {
-  setNeedleAngle(angles.future, true);
-  applyTimeline('future');
+  // Fallback tap diretto sulle tacche
+  tickPast.addEventListener('click', () => { setNeedleAngle(angles.past, true); applyTimeline('past'); });
+  tickPresent.addEventListener('click', () => { setNeedleAngle(angles.present, true); applyTimeline('present'); });
+  tickFuture.addEventListener('click', () => { setNeedleAngle(angles.future, true); applyTimeline('future'); });
 });

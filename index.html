@@ -1,84 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Museo Marazzato — Three Timelines</title>
+  
+  <!-- Barlow Condensed Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css">
+  
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <!-- Custom Script pre-caricato per registrare i componenti A-Frame prima della scena -->
+  <script src="script.js" defer></script>
 </head>
 <body>
+
+  <!-- Logo Overlay (Placeholder) -->
+  <div id="logo-overlay">MM</div>
 
   <!-- Schermata intro -->
   <div id="intro">
     <h1>THREE TIMELINES</h1>
     <p class="subtitle">Una cornice. Tre tempi.</p>
-    <p class="instructions">
-      Tappa <strong>INIZIA</strong> e inquadra il marker.
-    </p>
+    <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra il marker sul plinto.</p>
     <button id="start-btn">INIZIA</button>
   </div>
 
   <!-- Hint quando cerca il marker -->
-  <div id="scan-hint" class="hidden">Inquadra il marker</div>
+  <div id="scan-hint" class="hidden">INQUADRA IL MARKER</div>
 
   <!-- Ghiera timeline -->
-<div id="timeline-dial" class="hidden">
-  <svg viewBox="0 0 240 140" id="dial-svg">
-    <!-- arco di sfondo -->
-    <path d="M 30 120 A 90 90 0 0 1 210 120"
-          fill="none" stroke="#333333" stroke-width="2" opacity="0.3"/>
+  <div id="timeline-dial" class="hidden">
+    <svg viewBox="0 0 240 140" id="dial-svg">
+      <path d="M 30 120 A 90 90 0 0 1 210 120" fill="none" stroke="#333333" stroke-width="2" opacity="0.3"/>
+      
+      <g id="tick-past">
+        <circle cx="30" cy="120" r="14" fill="#F4F1EA" stroke="#333333" stroke-width="2"/>
+        <text x="30" y="125" text-anchor="middle" font-size="14" font-weight="700" fill="#333333">P</text>
+      </g>
+      
+      <g id="tick-present" class="active">
+        <circle cx="120" cy="30" r="14" fill="#333333" stroke="#333333" stroke-width="2"/>
+        <text x="120" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="#F4F1EA">●</text>
+      </g>
+      
+      <g id="tick-future">
+        <circle cx="210" cy="120" r="14" fill="#F4F1EA" stroke="#333333" stroke-width="2"/>
+        <text x="210" y="125" text-anchor="middle" font-size="14" font-weight="700" fill="#333333">F</text>
+      </g>
+      
+      <line id="needle" x1="120" y1="120" x2="120" y2="40" stroke="#333333" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="120" cy="120" r="8" fill="#333333"/>
+    </svg>
+    <div id="dial-label">PRESENTE</div>
+  </div>
 
-    <!-- tre tacche con label -->
-    <g id="tick-past">
-      <circle cx="30" cy="120" r="14" fill="#F4F1EA" stroke="#333333" stroke-width="2"/>
-      <text x="30" y="125" text-anchor="middle" font-family="sans-serif"
-            font-size="11" font-weight="700" fill="#333333" letter-spacing="1">P</text>
-    </g>
-
-    <g id="tick-present">
-      <circle cx="120" cy="30" r="14" fill="#F4F1EA" stroke="#333333" stroke-width="2"/>
-      <text x="120" y="35" text-anchor="middle" font-family="sans-serif"
-            font-size="11" font-weight="700" fill="#333333" letter-spacing="1">●</text>
-    </g>
-
-    <g id="tick-future">
-      <circle cx="210" cy="120" r="14" fill="#F4F1EA" stroke="#333333" stroke-width="2"/>
-      <text x="210" y="125" text-anchor="middle" font-family="sans-serif"
-            font-size="11" font-weight="700" fill="#333333" letter-spacing="1">F</text>
-    </g>
-
-    <!-- lancetta -->
-    <line id="needle" x1="120" y1="120" x2="120" y2="40"
-          stroke="#333333" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="120" cy="120" r="8" fill="#333333"/>
-  </svg>
-
-  <div id="dial-label">PRESENTE</div>
-</div>
-
-  <!-- Scena AR con marker di test MindAR -->
-  <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no;"
+  <!-- Scena AR -->
+  <!-- Ottimizzazione A13: disabilitato antialias per salvare GPU, colorManagement attivo -->
+  <a-scene mindar-image="imageTargetSrc: assets/targets.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
            color-space="sRGB"
-           renderer="colorManagement: true, physicallyCorrectLights"
+           renderer="colorManagement: true; physicallyCorrectLights: true; antialias: false;"
            vr-mode-ui="enabled: false"
            device-orientation-permission-ui="enabled: false">
 
+    <a-assets>
+      <!-- Modello 3D: solo la cornice esterna -->
+      <a-asset-item id="frame-model" src="models/cornice.glb"></a-asset-item>
+      
+      <!-- Texture pre-caricate in memoria per swap istantaneo -->
+      <img id="tex-past" src="textures/past.jpeg">
+      <img id="tex-present" src="textures/present.jpeg">
+      <img id="tex-future" src="textures/future.jpeg">
+    </a-assets>
+
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Cubo placeholder: lo sostituiremo con la cornice -->
-      <a-box id="placeholder"
-             position="0 0 0.1"
-             rotation="0 0 0"
-             width="0.6"
-             height="0.4"
-             depth="0.05"
-             color="#C72A09"></a-box>
+    <!-- Luci ottimizzate: Niente castShadow -->
+    <a-entity light="type: hemisphere; color: #ffffff; groundColor: #bbbbbb; intensity: 1"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 0.6" position="0.5 1 1"></a-entity>
+
+    <!-- Target AR -->
+    <a-entity mindar-image-target="targetIndex: 0" id="ar-target">
+      
+      <!-- L'entità che gestisce il cambio material è un componente custom 'frame-state-manager' -->
+      <a-entity id="frame-wrapper" scale="1 1 1" position="0 0 0" rotation="0 0 0" frame-state-manager="state: present">
+        
+        <!-- Mesh Cornice -->
+        <a-gltf-model src="#frame-model"></a-gltf-model>
+        
+        <!-- Plane per la Foto (Z leggermente arretrato per stare dentro la cornice. Aggiusta width/height in base alla cornice) -->
+        <a-plane id="photo-plane" src="#tex-present" position="0 0 -0.01" width="1.2" height="0.8" material="shader: flat;"></a-plane>
+      </a-entity>
+
     </a-entity>
   </a-scene>
 
-  <script src="script.js"></script>
 </body>
 </html>
