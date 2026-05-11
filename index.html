@@ -164,7 +164,7 @@
 
     <!-- Target 1: Vaso (scala aumentata, offset Y/Z per appoggiarsi al piano) -->
     <a-entity mindar-image-target="targetIndex: 1" id="ar-target-vase">
-      <a-entity id="vase-wrapper" position="0 0.3 0" scale="6 6 6">
+      <a-entity id="vase-wrapper" position="0 0.6 0" scale="6 6 6">
         <a-gltf-model id="vase-past"    src="#vaso-past-glb"    position="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="vase-present" src="#vaso-present-glb" position="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
         <a-gltf-model id="vase-future"  src="#vaso-future-glb"  position="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
@@ -173,7 +173,7 @@
 
     <!-- Target 0: Foto (offset X per non coprire il marker, transparent per il fade) -->
     <a-entity mindar-image-target="targetIndex: 0" id="ar-target-photo">
-      <a-entity id="frame-wrapper" scale="2.5 2.5 2.5" position="1.2 -1.2 0">
+      <a-entity id="frame-wrapper" scale="2.5 2.5 2.5" position="0 1.0 0">
         <a-plane id="photo-plane" src="#tex-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
       </a-entity>
     </a-entity>
