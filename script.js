@@ -123,9 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
       activeTarget = 'piantina';
       showUI();
-      // Riavvia animazione dall'inizio ogni volta che il marker viene inquadrato
+      // Riavvia animazione 1.5s dopo che il marker è stato inquadrato
       if (plantModel) {
-        plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true;');
+        plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true; timeScale: 0;');
+        setTimeout(() => {
+          plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true; timeScale: 1;');
+        }, 1500);
       }
     });
     targetPiantina.addEventListener('targetLost', () => {
