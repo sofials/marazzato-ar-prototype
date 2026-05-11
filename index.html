@@ -92,7 +92,7 @@
     <a-entity light="type: directional; color: #ffffff; intensity: 0.6" position="0.5 1 1"></a-entity>
 
     <!-- Target 0: Vaso -->
-    <a-entity mindar-image-target="targetIndex: 0" id="ar-target-vase">
+    <a-entity mindar-image-target="targetIndex: 1" id="ar-target-vase">
       <a-entity id="vase-wrapper" position="0 -0.2 0" scale="1 1 1">
         <a-gltf-model id="vase-past"    src="#vaso-past-glb"    visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="vase-present" src="#vaso-present-glb" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
@@ -101,7 +101,7 @@
     </a-entity>
 
     <!-- Target 1: Foto -->
-    <a-entity mindar-image-target="targetIndex: 1" id="ar-target-photo">
+    <a-entity mindar-image-target="targetIndex: 0" id="ar-target-photo">
       <a-entity id="frame-wrapper" scale="1 1 1" position="0 0 0">
         <a-plane id="photo-plane" src="#tex-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
       </a-entity>
