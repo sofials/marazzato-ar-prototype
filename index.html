@@ -70,7 +70,6 @@
   </div>
 
   <!-- Scena AR -->
-  <!-- Ottimizzazione A13: disabilitato antialias per salvare GPU, colorManagement attivo -->
   <a-scene mindar-image="imageTargetSrc: assets/targets.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
            color-space="sRGB"
            renderer="colorManagement: true; physicallyCorrectLights: true; antialias: false;"
@@ -78,30 +77,36 @@
            device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      
-      <!-- Texture pre-caricate in memoria per swap istantaneo -->
       <img id="tex-past" src="textures/past.jpg">
       <img id="tex-present" src="textures/present.jpg">
       <img id="tex-future" src="textures/future.jpg">
+
+      <a-asset-item id="vaso-past-glb" src="models/vaso-past.glb"></a-asset-item>
+      <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb"></a-asset-item>
+      <a-asset-item id="vaso-future-glb" src="models/vaso-future.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Luci ottimizzate: Niente castShadow -->
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #bbbbbb; intensity: 1"></a-entity>
     <a-entity light="type: directional; color: #ffffff; intensity: 0.6" position="0.5 1 1"></a-entity>
 
-    <!-- Target AR -->
-    <a-entity mindar-image-target="targetIndex: 0" id="ar-target">
-      
-      <!-- L'entità che gestisce il cambio material è un componente custom 'frame-state-manager' -->
-      <a-entity id="frame-wrapper" scale="1 1 1" position="0 0 0" rotation="0 0 0" frame-state-manager="state: present">
-        
-        <!-- Plane per la Foto (Z leggermente arretrato per stare dentro la cornice. Aggiusta width/height in base alla cornice) -->
-        <a-plane id="photo-plane" src="#tex-present" position="0 0 -0.01" width="1.2" height="0.8" material="shader: flat;"></a-plane>
+    <!-- Target 0: Vaso -->
+    <a-entity mindar-image-target="targetIndex: 0" id="ar-target-vase">
+      <a-entity id="vase-wrapper" position="0 -0.2 0" scale="1 1 1">
+        <a-gltf-model id="vase-past"    src="#vaso-past-glb"    visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="vase-present" src="#vaso-present-glb" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
+        <a-gltf-model id="vase-future"  src="#vaso-future-glb"  visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
-
     </a-entity>
+
+    <!-- Target 1: Foto -->
+    <a-entity mindar-image-target="targetIndex: 1" id="ar-target-photo">
+      <a-entity id="frame-wrapper" scale="1 1 1" position="0 0 0">
+        <a-plane id="photo-plane" src="#tex-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true;"></a-plane>
+      </a-entity>
+    </a-entity>
+
   </a-scene>
 
 </body>
