@@ -152,6 +152,10 @@
       <img id="tex-present" src="textures/present.jpg">
       <img id="tex-future" src="textures/future.jpg">
 
+      <img id="tex-drawing-past" src="textures/drawingpast.jpg">
+      <img id="tex-drawing-present" src="textures/drawingpresent.jpg">
+      <img id="tex-drawing-future" src="textures/drawingfuture.jpg">
+
       <a-asset-item id="vaso-past-glb" src="models/vaso-past.glb"></a-asset-item>
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb"></a-asset-item>
       <a-asset-item id="vaso-future-glb" src="models/vaso-future.glb"></a-asset-item>
@@ -171,10 +175,25 @@
       </a-entity>
     </a-entity>
 
-    <!-- Target 0: Foto (offset X per non coprire il marker, transparent per il fade) -->
+    <!-- Target 0: Foto -->
     <a-entity mindar-image-target="targetIndex: 0" id="ar-target-photo">
       <a-entity id="frame-wrapper" scale="2.5 2.5 2.5" position="0 1.0 0">
         <a-plane id="photo-plane" src="#tex-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
+      </a-entity>
+    </a-entity>
+
+    <!-- Target 2: Piantina (placeholder) -->
+    <a-entity mindar-image-target="targetIndex: 2" id="ar-target-piantina">
+    </a-entity>
+
+    <!-- Target 3: Calendario (placeholder) -->
+    <a-entity mindar-image-target="targetIndex: 3" id="ar-target-calendario">
+    </a-entity>
+
+    <!-- Target 4: Disegno -->
+    <a-entity mindar-image-target="targetIndex: 4" id="ar-target-disegno">
+      <a-entity id="drawing-wrapper" scale="2.5 2.5 2.5" position="0 1.0 0">
+        <a-plane id="drawing-plane" src="#tex-drawing-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
       </a-entity>
     </a-entity>
 
