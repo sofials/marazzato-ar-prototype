@@ -56,6 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentAngle = 0;
   let isFading = false;
 
+  // Reset stato iniziale
+  dialLabel.textContent = labels['present'];
+  currentTimeline = 'present';
+
   // === AVVIO AR ===
   startBtn.addEventListener('click', async () => {
     intro.classList.add('hidden');
