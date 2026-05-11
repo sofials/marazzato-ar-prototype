@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isDragging = false;
   let currentAngle = 0;
   let isFading = false;
+  let activeTarget = null; // 'vase' | 'photo' | null
 
   // Reset stato iniziale
   dialLabel.textContent = labels['present'];
@@ -73,8 +74,37 @@ document.addEventListener("DOMContentLoaded", () => {
     dial.classList.remove('hidden');
   }
 
-  if (targetPhoto) targetPhoto.addEventListener('targetFound', showUI);
-  if (targetVase)  targetVase.addEventListener('targetFound', showUI);
+  function hideUI() {
+    dial.classList.add('hidden');
+    photoCaption.classList.add('hidden');
+    scanHint.classList.remove('hidden');
+  }
+
+  // === LISTENER TARGET CON TRACCIAMENTO ATTIVO ===
+  if (targetPhoto) {
+    targetPhoto.addEventListener('targetFound', () => {
+      activeTarget = 'photo';
+      showUI();
+    });
+    targetPhoto.addEventListener('targetLost', () => {
+      if (activeTarget === 'photo') {
+        activeTarget = null;
+        hideUI();
+      }
+    });
+  }
+  if (targetVase) {
+    targetVase.addEventListener('targetFound', () => {
+      activeTarget = 'vase';
+      showUI();
+    });
+    targetVase.addEventListener('targetLost', () => {
+      if (activeTarget === 'vase') {
+        activeTarget = null;
+        hideUI();
+      }
+    });
+  }
 
   // === MOTORE DI FADE ===
   function setOpacity(el, opacity) {
@@ -103,49 +133,53 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(step);
   }
 
-  // === LOGICA GHIERA ===
+  // === LOGICA TIMELINE (agisce solo sul target attivo) ===
   function applyTimeline(timeline) {
     if (currentTimeline === timeline || isFading) return;
     isFading = true;
 
     const oldTimeline = currentTimeline;
     currentTimeline = timeline;
-
     const fadeTime = 250;
 
-    // Fade out
-    animateFade(photoPlane, true, fadeTime);
-    if (vases[oldTimeline]) animateFade(vases[oldTimeline], true, fadeTime);
+    // Aggiorna UI ghiera sempre
+    dialLabel.textContent = labels[timeline];
+    tickPast.classList.toggle('active',    timeline === 'past');
+    tickPresent.classList.toggle('active', timeline === 'present');
+    tickFuture.classList.toggle('active',  timeline === 'future');
 
-    setTimeout(() => {
-      // Swap foto
-      if (photoPlane) photoPlane.setAttribute('src', `#tex-${timeline}`);
+    // Didascalia: solo nel passato E solo se siamo sulla foto
+    if (timeline === 'past' && activeTarget === 'photo') {
+      photoCaption.classList.remove('hidden');
+    } else {
+      photoCaption.classList.add('hidden');
+    }
 
-      // Swap vaso
-      if (vases[oldTimeline]) vases[oldTimeline].setAttribute('visible', 'false');
-      if (vases[timeline]) {
-        vases[timeline].setAttribute('visible', 'true');
-        setOpacity(vases[timeline], 0);
-      }
-
-      // Didascalia solo nel passato
-      if (timeline === 'past') photoCaption.classList.remove('hidden');
-      else photoCaption.classList.add('hidden');
-
-      // Aggiorna UI ghiera
-      dialLabel.textContent = labels[timeline];
-      tickPast.classList.toggle('active',    timeline === 'past');
-      tickPresent.classList.toggle('active', timeline === 'present');
-      tickFuture.classList.toggle('active',  timeline === 'future');
-
-      // Fade in
-      animateFade(photoPlane, false, fadeTime);
-      if (vases[timeline]) {
-        animateFade(vases[timeline], false, fadeTime, () => { isFading = false; });
-      } else {
-        setTimeout(() => { isFading = false; }, fadeTime);
-      }
-    }, fadeTime);
+    // Agisci solo sull'elemento del target attivo
+    if (activeTarget === 'photo') {
+      animateFade(photoPlane, true, fadeTime);
+      setTimeout(() => {
+        photoPlane.setAttribute('src', `#tex-${timeline}`);
+        animateFade(photoPlane, false, fadeTime, () => { isFading = false; });
+      }, fadeTime);
+    } else if (activeTarget === 'vase') {
+      const oldVase = vases[oldTimeline];
+      const newVase = vases[timeline];
+      animateFade(oldVase, true, fadeTime);
+      setTimeout(() => {
+        if (oldVase) oldVase.setAttribute('visible', 'false');
+        if (newVase) {
+          newVase.setAttribute('visible', 'true');
+          setOpacity(newVase, 0);
+          animateFade(newVase, false, fadeTime, () => { isFading = false; });
+        } else {
+          isFading = false;
+        }
+      }, fadeTime);
+    } else {
+      // Nessun target attivo: aggiorna solo lo stato logico
+      isFading = false;
+    }
   }
 
   // === LOGICA GHIERA (drag) ===
