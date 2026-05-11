@@ -76,7 +76,10 @@
     <div style="margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid #444; padding-bottom: 5px;">AR FINE-TUNING</div>
     <label>OGGETTO:</label>
     <select id="select-target" style="width: 100%; background: #222; color: white; border: 1px solid #555; margin-bottom: 15px; padding: 3px;">
-      <option value="vase-wrapper">VASO (3D)</option>
+      <option value="vase-wrapper">TUTTI I VASI (Insieme)</option>
+      <option value="vase-past">VASO (Passato)</option>
+      <option value="vase-present">VASO (Presente)</option>
+      <option value="vase-future">VASO (Futuro)</option>
       <option value="frame-wrapper">FOTO (2D)</option>
     </select>
     <label>X (Lat): <span id="val-x">0</span></label><br>
@@ -99,21 +102,35 @@
       const ss = document.getElementById('slide-s'), vs = document.getElementById('val-s');
       const vFinal = document.getElementById('val-final');
 
+      const ALL_VASES = ['vase-past', 'vase-present', 'vase-future'];
+
+      function getTargets() {
+        if (sel.value === 'vase-wrapper') {
+          return ALL_VASES.map(id => document.getElementById(id)).filter(Boolean);
+        }
+        const el = document.getElementById(sel.value);
+        return el ? [el] : [];
+      }
+
       function updateTransform() {
-        const targetEl = document.getElementById(sel.value);
-        if (!targetEl) return;
+        const targets = getTargets();
+        if (!targets.length) return;
         const x = sx.value, y = sy.value, z = sz.value, s = ss.value;
         vx.innerText = x; vy.innerText = y; vz.innerText = z; vs.innerText = s;
         vFinal.value = `position="${x} ${y} ${z}" scale="${s} ${s} ${s}"`;
-        targetEl.setAttribute('position', `${x} ${y} ${z}`);
-        targetEl.setAttribute('scale', `${s} ${s} ${s}`);
+        targets.forEach(el => {
+          el.setAttribute('position', `${x} ${y} ${z}`);
+          el.setAttribute('scale', `${s} ${s} ${s}`);
+        });
       }
 
       sel.addEventListener('change', () => {
-        const targetEl = document.getElementById(sel.value);
-        if (!targetEl) return;
-        const pos = targetEl.getAttribute('position');
-        const sca = targetEl.getAttribute('scale');
+        const ref = document.getElementById(
+          sel.value === 'vase-wrapper' ? 'vase-present' : sel.value
+        );
+        if (!ref) return;
+        const pos = ref.getAttribute('position');
+        const sca = ref.getAttribute('scale');
         sx.value = pos.x; sy.value = pos.y; sz.value = pos.z;
         ss.value = sca.x;
         updateTransform();
