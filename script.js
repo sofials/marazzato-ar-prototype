@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sceneEl = document.querySelector('a-scene');
   const targetEntity = document.getElementById('ar-target');
   const frameWrapper = document.getElementById('frame-wrapper');
+  const photoCaption = document.getElementById('photo-caption');
 
   const tickPast = document.getElementById('tick-past');
   const tickPresent = document.getElementById('tick-present');
@@ -96,6 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyTimeline(timeline) {
     if (currentTimeline === timeline) return;
     currentTimeline = timeline;
+
+    if (timeline === 'past') {
+      photoCaption.classList.remove('hidden');
+    } else {
+      photoCaption.classList.add('hidden');
+    }
 
     // Aggiorna l'entità A-Frame! Il componente reagirà e cambierà texture/material
     frameWrapper.setAttribute('frame-state-manager', `state: ${timeline}`);
