@@ -35,8 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const targetPhoto = document.getElementById('ar-target-photo');
   const targetVase = document.getElementById('ar-target-vase');
+  const targetDisegno = document.getElementById('ar-target-disegno');
 
   const photoPlane = document.getElementById('photo-plane');
+  const drawingPlane = document.getElementById('drawing-plane');
 
   const vases = {
     past:    document.getElementById('vase-past'),
@@ -91,10 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showUI();
     });
     targetPhoto.addEventListener('targetLost', () => {
-      if (activeTarget === 'photo') {
-        activeTarget = null;
-        hideUI();
-      }
+      if (activeTarget === 'photo') { activeTarget = null; hideUI(); }
     });
   }
   if (targetVase) {
@@ -104,10 +103,17 @@ document.addEventListener("DOMContentLoaded", () => {
       showUI();
     });
     targetVase.addEventListener('targetLost', () => {
-      if (activeTarget === 'vase') {
-        activeTarget = null;
-        hideUI();
-      }
+      if (activeTarget === 'vase') { activeTarget = null; hideUI(); }
+    });
+  }
+  if (targetDisegno) {
+    targetDisegno.addEventListener('targetFound', () => {
+      console.log('🎯 TARGET 4 (disegno) trovato');
+      activeTarget = 'disegno';
+      showUI();
+    });
+    targetDisegno.addEventListener('targetLost', () => {
+      if (activeTarget === 'disegno') { activeTarget = null; hideUI(); }
     });
   }
 
@@ -166,6 +172,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         photoPlane.setAttribute('src', `#tex-${timeline}`);
         animateFade(photoPlane, false, fadeTime, () => { isFading = false; });
+      }, fadeTime);
+    } else if (activeTarget === 'disegno') {
+      animateFade(drawingPlane, true, fadeTime);
+      setTimeout(() => {
+        drawingPlane.setAttribute('src', `#tex-drawing-${timeline}`);
+        animateFade(drawingPlane, false, fadeTime, () => { isFading = false; });
       }, fadeTime);
     } else if (activeTarget === 'vase') {
       const oldVase = vases[oldTimeline];
