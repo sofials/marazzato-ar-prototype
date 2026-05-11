@@ -210,9 +210,9 @@ body {
 
 #photo-caption {
   position: fixed;
-  top: 55%;
+  top: 5rem;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   background: rgba(244, 241, 235, 0.95);
   color: var(--mm-dark);
   padding: 0.6rem 1.2rem;
