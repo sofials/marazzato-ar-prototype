@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // === LISTENER TARGET CON TRACCIAMENTO ATTIVO ===
   if (targetPhoto) {
     targetPhoto.addEventListener('targetFound', () => {
+      console.log('🎯 TARGET 0 (photo) trovato');
       activeTarget = 'photo';
       showUI();
     });
@@ -95,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (targetVase) {
     targetVase.addEventListener('targetFound', () => {
+      console.log('🎯 TARGET 1 (vase) trovato');
       activeTarget = 'vase';
       showUI();
     });
