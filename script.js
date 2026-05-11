@@ -1,24 +1,27 @@
-// === COMPONENTE A-FRAME PER MATERIAL MANAGEMENT ===
-// Da registrare PRIMA del caricamento della scena
-AFRAME.registerComponent('frame-state-manager', {
-  schema: {
-    state: { type: 'string', default: 'present' }
+// === COMPONENTE PER L'OPACITA' DEI MODELLI 3D ===
+AFRAME.registerComponent('model-opacity', {
+  schema: { opacity: { type: 'number', default: 1.0 } },
+  init: function () {
+    this.el.addEventListener('model-loaded', this.applyOpacity.bind(this));
   },
-
   update: function () {
-    const state = this.data.state;
-    const photoPlane = document.getElementById('photo-plane');
-    if (!photoPlane) return;
-
-    switch (state) {
-      case 'past':    photoPlane.setAttribute('src', '#tex-past');    break;
-      case 'future':  photoPlane.setAttribute('src', '#tex-future');  break;
-      default:        photoPlane.setAttribute('src', '#tex-present'); break;
-    }
+    this.applyOpacity();
+  },
+  applyOpacity: function () {
+    const mesh = this.el.getObject3D('mesh');
+    const opacity = this.data.opacity;
+    if (!mesh) return;
+    mesh.traverse((node) => {
+      if (node.isMesh && node.material) {
+        node.material.transparent = true;
+        node.material.opacity = opacity;
+        node.material.needsUpdate = true;
+      }
+    });
   }
 });
 
-// === GESTIONE UI DOM ===
+// === GESTIONE UI E AR ===
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById('start-btn');
   const intro = document.getElementById('intro');
@@ -28,44 +31,120 @@ document.addEventListener("DOMContentLoaded", () => {
   const needle = document.getElementById('needle');
   const dialLabel = document.getElementById('dial-label');
   const sceneEl = document.querySelector('a-scene');
-  const targetEntity = document.getElementById('ar-target');
-  const frameWrapper = document.getElementById('frame-wrapper');
   const photoCaption = document.getElementById('photo-caption');
 
-  const tickPast = document.getElementById('tick-past');
-  const tickPresent = document.getElementById('tick-present');
-  const tickFuture = document.getElementById('tick-future');
+  const targetPhoto = document.getElementById('ar-target-photo');
+  const targetVase = document.getElementById('ar-target-vase');
 
-  // Angoli lancetta (gradi)
+  const photoPlane = document.getElementById('photo-plane');
+
+  const vases = {
+    past:    document.getElementById('vase-past'),
+    present: document.getElementById('vase-present'),
+    future:  document.getElementById('vase-future')
+  };
+
+  const tickPast    = document.getElementById('tick-past');
+  const tickPresent = document.getElementById('tick-present');
+  const tickFuture  = document.getElementById('tick-future');
+
   const angles = { past: -90, present: 0, future: 90 };
   const labels = { past: 'PASSATO', present: 'PRESENTE', future: 'FUTURO' };
 
   let currentTimeline = 'present';
   let isDragging = false;
   let currentAngle = 0;
+  let isFading = false;
 
   // === AVVIO AR ===
   startBtn.addEventListener('click', async () => {
     intro.classList.add('hidden');
     scanHint.classList.remove('hidden');
-
     const arSystem = sceneEl.systems['mindar-image-system'];
     await arSystem.start();
   });
 
-  // Mostra UI solo al primo riconoscimento del marker
-  targetEntity.addEventListener('targetFound', () => {
+  function showUI() {
     scanHint.classList.add('hidden');
     dial.classList.remove('hidden');
-  });
+  }
 
-  targetEntity.addEventListener('targetLost', () => {
-    // Opzionale: puoi rimettere l'hint se perde il target
-    scanHint.classList.remove('hidden');
-    dial.classList.add('hidden');
-  });
+  if (targetPhoto) targetPhoto.addEventListener('targetFound', showUI);
+  if (targetVase)  targetVase.addEventListener('targetFound', showUI);
 
-  // === LOGICA GHIERA (Ottimizzata) ===
+  // === MOTORE DI FADE ===
+  function setOpacity(el, opacity) {
+    if (!el) return;
+    if (el.tagName.toLowerCase() === 'a-plane') {
+      el.setAttribute('material', 'opacity', opacity);
+    } else {
+      el.setAttribute('model-opacity', `opacity: ${opacity}`);
+    }
+  }
+
+  function animateFade(el, isFadeOut, duration, callback) {
+    if (!el) { if (callback) callback(); return; }
+    const start = performance.now();
+
+    function step(timestamp) {
+      let progress = (timestamp - start) / duration;
+      if (progress > 1) progress = 1;
+      setOpacity(el, isFadeOut ? 1 - progress : progress);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        if (callback) callback();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // === LOGICA GHIERA ===
+  function applyTimeline(timeline) {
+    if (currentTimeline === timeline || isFading) return;
+    isFading = true;
+
+    const oldTimeline = currentTimeline;
+    currentTimeline = timeline;
+
+    const fadeTime = 250;
+
+    // Fade out
+    animateFade(photoPlane, true, fadeTime);
+    if (vases[oldTimeline]) animateFade(vases[oldTimeline], true, fadeTime);
+
+    setTimeout(() => {
+      // Swap foto
+      if (photoPlane) photoPlane.setAttribute('src', `#tex-${timeline}`);
+
+      // Swap vaso
+      if (vases[oldTimeline]) vases[oldTimeline].setAttribute('visible', 'false');
+      if (vases[timeline]) {
+        vases[timeline].setAttribute('visible', 'true');
+        setOpacity(vases[timeline], 0);
+      }
+
+      // Didascalia solo nel passato
+      if (timeline === 'past') photoCaption.classList.remove('hidden');
+      else photoCaption.classList.add('hidden');
+
+      // Aggiorna UI ghiera
+      dialLabel.textContent = labels[timeline];
+      tickPast.classList.toggle('active',    timeline === 'past');
+      tickPresent.classList.toggle('active', timeline === 'present');
+      tickFuture.classList.toggle('active',  timeline === 'future');
+
+      // Fade in
+      animateFade(photoPlane, false, fadeTime);
+      if (vases[timeline]) {
+        animateFade(vases[timeline], false, fadeTime, () => { isFading = false; });
+      } else {
+        setTimeout(() => { isFading = false; }, fadeTime);
+      }
+    }, fadeTime);
+  }
+
+  // === LOGICA GHIERA (drag) ===
   function angleFromPoint(x, y) {
     const dx = x - 120;
     const dy = 120 - y;
@@ -94,50 +173,29 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'present';
   }
 
-  function applyTimeline(timeline) {
-    if (currentTimeline === timeline) return;
-    currentTimeline = timeline;
-
-    if (timeline === 'past') {
-      photoCaption.classList.remove('hidden');
-    } else {
-      photoCaption.classList.add('hidden');
-    }
-
-    // Aggiorna l'entità A-Frame! Il componente reagirà e cambierà texture/material
-    frameWrapper.setAttribute('frame-state-manager', `state: ${timeline}`);
-
-    // Aggiorna Label e Classi
-    dialLabel.textContent = labels[timeline];
-    
-    tickPast.classList.toggle('active', timeline === 'past');
-    tickPresent.classList.toggle('active', timeline === 'present');
-    tickFuture.classList.toggle('active', timeline === 'future');
-  }
-
-  // === EVENT HANDLERS DRAG ===
   function startDrag(clientX, clientY) {
+    if (isFading) return;
     isDragging = true;
     const { x, y } = getSvgCoords(clientX, clientY);
     setNeedleAngle(angleFromPoint(x, y), false);
   }
 
   function moveDrag(clientX, clientY) {
-    if (!isDragging) return;
+    if (!isDragging || isFading) return;
     const { x, y } = getSvgCoords(clientX, clientY);
     const angle = angleFromPoint(x, y);
     setNeedleAngle(angle, false);
-    
-    // Feedback real-time opzionale: se l'utente supera la soglia, scatta lo swap in AR
     applyTimeline(timelineFromAngle(angle));
   }
 
   function endDrag() {
     if (!isDragging) return;
     isDragging = false;
-    const timeline = timelineFromAngle(currentAngle);
-    setNeedleAngle(angles[timeline], true);
-    applyTimeline(timeline);
+    if (!isFading) {
+      const timeline = timelineFromAngle(currentAngle);
+      setNeedleAngle(angles[timeline], true);
+      applyTimeline(timeline);
+    }
   }
 
   // Mouse
@@ -150,8 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('touchmove', (e) => { if (!isDragging) return; e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
   window.addEventListener('touchend', endDrag);
 
-  // Fallback tap diretto sulle tacche
-  tickPast.addEventListener('click', () => { setNeedleAngle(angles.past, true); applyTimeline('past'); });
-  tickPresent.addEventListener('click', () => { setNeedleAngle(angles.present, true); applyTimeline('present'); });
-  tickFuture.addEventListener('click', () => { setNeedleAngle(angles.future, true); applyTimeline('future'); });
+  // Tap diretto sulle tacche
+  tickPast.addEventListener('click',    () => { if (!isFading) { setNeedleAngle(angles.past, true);    applyTimeline('past');    } });
+  tickPresent.addEventListener('click', () => { if (!isFading) { setNeedleAngle(angles.present, true); applyTimeline('present'); } });
+  tickFuture.addEventListener('click',  () => { if (!isFading) { setNeedleAngle(angles.future, true);  applyTimeline('future');  } });
 });
