@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetPhoto = document.getElementById('ar-target-photo');
   const targetVase = document.getElementById('ar-target-vase');
   const targetDisegno = document.getElementById('ar-target-disegno');
+  const targetPiantina = document.getElementById('ar-target-piantina');
+  const plantModel = document.getElementById('plant-model');
 
   const photoPlane = document.getElementById('photo-plane');
   const drawingPlane = document.getElementById('drawing-plane');
@@ -114,6 +116,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     targetDisegno.addEventListener('targetLost', () => {
       if (activeTarget === 'disegno') { activeTarget = null; hideUI(); }
+    });
+  }
+  if (targetPiantina) {
+    targetPiantina.addEventListener('targetFound', () => {
+      console.log('🌱 TARGET 2 (piantina) trovato');
+      activeTarget = 'piantina';
+      showUI();
+      // Riavvia animazione dall'inizio ogni volta che il marker viene inquadrato
+      if (plantModel) {
+        plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true;');
+      }
+    });
+    targetPiantina.addEventListener('targetLost', () => {
+      if (activeTarget === 'piantina') { activeTarget = null; hideUI(); }
     });
   }
 
