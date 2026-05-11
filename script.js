@@ -67,7 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
     scanHint.classList.remove('hidden');
     const arSystem = sceneEl.systems['mindar-image-system'];
     await arSystem.start();
-    console.log('📦 Target caricati nel .mind:', arSystem.controller?.imageTargets?.length);
+    console.log('arSystem:', arSystem);
+    console.log('controller:', arSystem.controller);
+    console.log('keys controller:', arSystem.controller ? Object.keys(arSystem.controller) : 'no controller');
   });
 
   function showUI() {
