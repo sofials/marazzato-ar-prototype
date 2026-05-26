@@ -95,6 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (intro)        intro.classList.add('hidden');
     if (scanHint)     scanHint.classList.remove('hidden');
 
+    if (!sceneEl.hasLoaded) {
+      await new Promise(resolve => sceneEl.addEventListener('loaded', resolve, { once: true }));
+    }
     const arSystem = sceneEl.systems['mindar-image-system'];
     await arSystem.start();
 
