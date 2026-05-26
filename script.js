@@ -90,21 +90,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stream.getTracks().forEach(t => t.stop());
 
-    introDefault.style.display = 'block';
-    introDenied.style.display  = 'none';
-    intro.classList.add('hidden');
-    scanHint.classList.remove('hidden');
+    if (introDefault) introDefault.style.display = 'block';
+    if (introDenied)  introDenied.style.display  = 'none';
+    if (intro)        intro.classList.add('hidden');
+    if (scanHint)     scanHint.classList.remove('hidden');
 
     const arSystem = sceneEl.systems['mindar-image-system'];
     await arSystem.start();
 
   } catch (err) {
     console.warn('Camera error:', err.name, err.message);
-    introDefault.style.display = 'none';
-    introDenied.style.display  = 'block';
+    if (introDefault) introDefault.style.display = 'none';
+    if (introDenied)  introDenied.style.display  = 'block';
 
-    // Messaggio diverso se API non disponibile (HTTP su Android)
-    if (err.name === 'NotSupportedError') {
+    if (err.name === 'NotSupportedError' && introDenied) {
       introDenied.querySelector('.instructions').innerHTML =
         'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
     }
