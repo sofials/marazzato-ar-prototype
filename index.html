@@ -27,18 +27,32 @@
 
   <!-- Schermata intro -->
   <div id="intro">
-    <div class="intro-card">
-      <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
+ <div class="intro-card">
+  <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
+  <h1>THREE TIMELINES</h1>
+  <p class="subtitle">Scopri le storie oltre la cenere</p>
 
-      <h1>THREE TIMELINES</h1>
-      <p class="subtitle">Scopri le storie oltre la cenere </p>
-
-      <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra i marker presenti in sala.</p>
-
-      <button id="start-btn">INIZIA</button>
-    </div>
+  <!-- Stato normale -->
+  <div id="intro-default">
+    <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra i marker presenti in sala.</p>
+    <button id="start-btn">INIZIA</button>
   </div>
 
+  <!-- Stato: permesso negato -->
+  <div id="intro-denied" style="display:none;">
+    <p class="instructions" style="color:#c93327;">
+      La fotocamera è bloccata.<br>Per continuare:
+    </p>
+    <ol class="permission-steps">
+      <li>Vai su <strong>Impostazioni</strong></li>
+      <li>Cerca <strong>Safari</strong></li>
+      <li>Tocca <strong>Fotocamera → Consenti</strong></li>
+      <li>Torna qui e ricarica la pagina</li>
+    </ol>
+    <button id="retry-btn">RIPROVA</button>
+  </div>
+</div>
+  </div>
   <!-- Hint quando cerca il marker -->
   <div id="scan-hint" class="hidden">INQUADRA IL MARKER</div>
 

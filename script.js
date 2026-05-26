@@ -70,32 +70,46 @@ document.addEventListener("DOMContentLoaded", () => {
   currentTimeline = 'present';
 
   // === AVVIO AR E RICHIESTA FOTOCAMERA ===
-  async function requestCameraAndStart() {
+ async function requestCameraAndStart() {
+  try {
+    // Android HTTP: navigator.mediaDevices può essere undefined
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw Object.assign(new Error('API non disponibile'), { name: 'NotSupportedError' });
+    }
+
+    // Prova prima con la fotocamera posteriore
+    let stream;
     try {
-      // Richiesta esplicita — su iOS Safari questo trigger il dialog
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: 'environment' } }
       });
-      // Permesso ok: chiudi subito lo stream di test, MindAR aprirà il suo
-      stream.getTracks().forEach(t => t.stop());
+    } catch {
+      // Fallback: qualsiasi fotocamera (alcuni Samsung ignorano exact)
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    }
 
-      // Avvia
-      introDefault.style.display = 'block';
-      introDenied.style.display  = 'none';
-      intro.classList.add('hidden');
-      scanHint.classList.remove('hidden');
+    stream.getTracks().forEach(t => t.stop());
 
-      const arSystem = sceneEl.systems['mindar-image-system'];
-      await arSystem.start();
+    introDefault.style.display = 'block';
+    introDenied.style.display  = 'none';
+    intro.classList.add('hidden');
+    scanHint.classList.remove('hidden');
 
-    } catch (err) {
-      // Permesso negato o non disponibile
-      console.warn('Camera error:', err.name, err.message);
-      introDefault.style.display = 'none';
-      introDenied.style.display  = 'block';
+    const arSystem = sceneEl.systems['mindar-image-system'];
+    await arSystem.start();
+
+  } catch (err) {
+    console.warn('Camera error:', err.name, err.message);
+    introDefault.style.display = 'none';
+    introDenied.style.display  = 'block';
+
+    // Messaggio diverso se API non disponibile (HTTP su Android)
+    if (err.name === 'NotSupportedError') {
+      introDenied.querySelector('.instructions').innerHTML =
+        'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
     }
   }
-
+}
   startBtn.addEventListener('click', requestCameraAndStart);
   retryBtn.addEventListener('click', requestCameraAndStart);
 
