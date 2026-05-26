@@ -71,58 +71,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // === AVVIO AR E RICHIESTA FOTOCAMERA ===
   async function requestCameraAndStart() {
-    try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw Object.assign(new Error('API non disponibile'), { name: 'NotSupportedError' });
-      }
+  try {
+    introDefault.style.display = 'none';
+    introDenied.style.display = 'none';
+    intro.classList.add('hidden');
+    scanHint.classList.remove('hidden');
 
-      let stream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: 'environment' } }
-        });
-      } catch {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      }
-      stream.getTracks().forEach(t => t.stop());
+    // Lascia che MindAR gestisca la camera direttamente
+    const arSystem = sceneEl.systems['mindar-image-system'];
+    if (!arSystem) throw new Error('MindAR system non trovato');
 
-      if (introDefault) introDefault.style.display = 'none';
-      if (introDenied)  introDenied.style.display  = 'none';
-      if (intro)        intro.classList.add('hidden');
-      if (scanHint)     scanHint.classList.remove('hidden');
-
+    if (!sceneEl.renderStarted) {
       await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('SceneTimeout')), 20000);
-
-        const doStart = async () => {
+        const timeout = setTimeout(() => reject(new Error('SceneTimeout')), 30000);
+        sceneEl.addEventListener('renderstart', () => {
           clearTimeout(timeout);
-          try {
-            const arSystem = sceneEl.systems['mindar-image-system'];
-            if (!arSystem) throw new Error('MindAR system non trovato');
-            await arSystem.start();
-            resolve();
-          } catch (e) { reject(e); }
-        };
-
-        if (sceneEl.renderStarted) {
-          doStart();
-        } else {
-          sceneEl.addEventListener('renderstart', doStart, { once: true });
-        }
+          resolve();
+        }, { once: true });
       });
+    }
 
-    } catch (err) {
-      console.warn('Errore avvio AR:', err.name, err.message);
-      if (introDefault) introDefault.style.display = 'none';
-      if (introDenied)  introDenied.style.display  = 'block';
-      if (intro)        intro.classList.remove('hidden');
-      if (err.name === 'NotSupportedError' || err.message === 'SceneTimeout') {
-        const instructions = introDenied && introDenied.querySelector('.instructions');
-        if (instructions) instructions.innerHTML =
-          'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
-      }
+    await arSystem.start(); // MindAR chiede la camera qui
+
+  } catch (err) {
+    console.warn('Errore avvio AR:', err.name, err.message);
+    scanHint.classList.add('hidden');
+    intro.classList.remove('hidden');
+    introDenied.style.display = 'block';
+
+    // Differenzia il messaggio per tipo di errore
+    const instructions = introDenied.querySelector('.instructions');
+    if (err.name === 'NotAllowedError') {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      instructions.innerHTML = isIOS
+        ? 'Fotocamera bloccata.<br>Vai in <strong>Impostazioni → Safari → Fotocamera → Consenti</strong>, poi torna qui.'
+        : 'Fotocamera bloccata.<br>Tocca l\'icona 🔒 nella barra dell\'indirizzo e consenti la fotocamera.';
+    } else if (err.message === 'SceneTimeout') {
+      instructions.innerHTML = 'Caricamento lento.<br>Controlla la connessione e riprova.';
+    } else {
+      instructions.innerHTML = 'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
     }
   }
+}
   startBtn.addEventListener('click', requestCameraAndStart);
   retryBtn.addEventListener('click', requestCameraAndStart);
 
