@@ -70,48 +70,59 @@ document.addEventListener("DOMContentLoaded", () => {
   currentTimeline = 'present';
 
   // === AVVIO AR E RICHIESTA FOTOCAMERA ===
- async function requestCameraAndStart() {
-  try {
-    // Android HTTP: navigator.mediaDevices può essere undefined
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw Object.assign(new Error('API non disponibile'), { name: 'NotSupportedError' });
-    }
-
-    // Prova prima con la fotocamera posteriore
-    let stream;
+  async function requestCameraAndStart() {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: 'environment' } }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw Object.assign(new Error('API non disponibile'), { name: 'NotSupportedError' });
+      }
+
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: 'environment' } }
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+      stream.getTracks().forEach(t => t.stop());
+
+      if (introDefault) introDefault.style.display = 'none';
+      if (introDenied)  introDenied.style.display  = 'none';
+      if (intro)        intro.classList.add('hidden');
+      if (scanHint)     scanHint.classList.remove('hidden');
+
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('SceneTimeout')), 20000);
+
+        const doStart = async () => {
+          clearTimeout(timeout);
+          try {
+            const arSystem = sceneEl.systems['mindar-image-system'];
+            if (!arSystem) throw new Error('MindAR system non trovato');
+            await arSystem.start();
+            resolve();
+          } catch (e) { reject(e); }
+        };
+
+        if (sceneEl.renderStarted) {
+          doStart();
+        } else {
+          sceneEl.addEventListener('renderstart', doStart, { once: true });
+        }
       });
-    } catch {
-      // Fallback: qualsiasi fotocamera (alcuni Samsung ignorano exact)
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    }
 
-    stream.getTracks().forEach(t => t.stop());
-
-    if (introDefault) introDefault.style.display = 'block';
-    if (introDenied)  introDenied.style.display  = 'none';
-    if (intro)        intro.classList.add('hidden');
-    if (scanHint)     scanHint.classList.remove('hidden');
-
-    if (!sceneEl.hasLoaded) {
-      await new Promise(resolve => sceneEl.addEventListener('loaded', resolve, { once: true }));
-    }
-    const arSystem = sceneEl.systems['mindar-image-system'];
-    await arSystem.start();
-
-  } catch (err) {
-    console.warn('Camera error:', err.name, err.message);
-    if (introDefault) introDefault.style.display = 'none';
-    if (introDenied)  introDenied.style.display  = 'block';
-
-    if (err.name === 'NotSupportedError' && introDenied) {
-      introDenied.querySelector('.instructions').innerHTML =
-        'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
+    } catch (err) {
+      console.warn('Errore avvio AR:', err.name, err.message);
+      if (introDefault) introDefault.style.display = 'none';
+      if (introDenied)  introDenied.style.display  = 'block';
+      if (intro)        intro.classList.remove('hidden');
+      if (err.name === 'NotSupportedError' || err.message === 'SceneTimeout') {
+        const instructions = introDenied && introDenied.querySelector('.instructions');
+        if (instructions) instructions.innerHTML =
+          'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
+      }
     }
   }
-}
   startBtn.addEventListener('click', requestCameraAndStart);
   retryBtn.addEventListener('click', requestCameraAndStart);
 

@@ -94,7 +94,7 @@
            vr-mode-ui="enabled: false"
            device-orientation-permission-ui="enabled: false">
 
-    <a-assets>
+    <a-assets timeout="15000">
       <img id="tex-past" src="textures/past.jpg">
       <img id="tex-present" src="textures/present.jpg">
       <img id="tex-future" src="textures/future.jpg">
@@ -103,10 +103,10 @@
       <img id="tex-drawing-present" src="textures/drawingpresent.jpg">
       <img id="tex-drawing-future" src="textures/drawingfuture.jpg">
 
-      <a-asset-item id="vaso-past-glb" src="models/vaso-past.glb"></a-asset-item>
-      <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb"></a-asset-item>
-      <a-asset-item id="vaso-future-glb" src="models/vaso-future.glb"></a-asset-item>
-      <a-asset-item id="plant-glb" src="models/plantgrowing.glb"></a-asset-item>
+      <a-asset-item id="vaso-past-glb"    src="models/vaso-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="plant-glb"        src="models/plantgrowing.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
