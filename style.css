@@ -228,3 +228,16 @@ body {
   border: 1px solid rgba(51, 51, 51, 0.1);
   transition: opacity 0.3s ease-in-out;
 }
+.permission-steps {
+  text-align: left;
+  margin: 0 auto 2rem;
+  padding-left: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 2;
+  color: var(--mm-dark);
+  max-width: 260px;
+}
+
+.permission-steps strong {
+  color: var(--mm-red);
+}

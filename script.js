@@ -41,6 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const photoPlane = document.getElementById('photo-plane');
   const drawingPlane = document.getElementById('drawing-plane');
+  
+  const introDenied  = document.getElementById('intro-denied');
+  const introDefault = document.getElementById('intro-default');
+  const retryBtn     = document.getElementById('retry-btn');
 
   const vases = {
     past:    document.getElementById('vase-past'),
@@ -65,16 +69,35 @@ document.addEventListener("DOMContentLoaded", () => {
   dialLabel.textContent = labels['present'];
   currentTimeline = 'present';
 
-  // === AVVIO AR ===
-  startBtn.addEventListener('click', async () => {
-    intro.classList.add('hidden');
-    scanHint.classList.remove('hidden');
-    const arSystem = sceneEl.systems['mindar-image-system'];
-    await arSystem.start();
-    console.log('arSystem:', arSystem);
-    console.log('controller:', arSystem.controller);
-    console.log('keys controller:', arSystem.controller ? Object.keys(arSystem.controller) : 'no controller');
-  });
+  // === AVVIO AR E RICHIESTA FOTOCAMERA ===
+  async function requestCameraAndStart() {
+    try {
+      // Richiesta esplicita — su iOS Safari questo trigger il dialog
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      // Permesso ok: chiudi subito lo stream di test, MindAR aprirà il suo
+      stream.getTracks().forEach(t => t.stop());
+
+      // Avvia
+      introDefault.style.display = 'block';
+      introDenied.style.display  = 'none';
+      intro.classList.add('hidden');
+      scanHint.classList.remove('hidden');
+
+      const arSystem = sceneEl.systems['mindar-image-system'];
+      await arSystem.start();
+
+    } catch (err) {
+      // Permesso negato o non disponibile
+      console.warn('Camera error:', err.name, err.message);
+      introDefault.style.display = 'none';
+      introDenied.style.display  = 'block';
+    }
+  }
+
+  startBtn.addEventListener('click', requestCameraAndStart);
+  retryBtn.addEventListener('click', requestCameraAndStart);
 
   function showUI() {
     scanHint.classList.add('hidden');
