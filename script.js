@@ -327,3 +327,69 @@ document.addEventListener("DOMContentLoaded", () => {
   tickPresent.addEventListener('click', () => { if (!isFading) { setNeedleAngle(angles.present, true); applyTimeline('present'); } });
   tickFuture.addEventListener('click',  () => { if (!isFading) { setNeedleAngle(angles.future, true);  applyTimeline('future');  } });
 });
+
+// === DEBUG GERMOGLIO (rimuovere in produzione) ===
+(function () {
+  const model = document.getElementById('plant-model');
+  if (!model) return;
+
+  const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1 };
+  const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1 };
+  const state    = { px: 0,    py: 0,    pz: 0,    rx: 0, ry: 0, rz: 0, s:   1 };
+
+  try {
+    const saved = localStorage.getItem('germoglio-debug');
+    if (saved) Object.assign(state, JSON.parse(saved));
+  } catch (e) {}
+
+  function applyToModel() {
+    model.setAttribute('position', `${state.px} ${state.py} ${state.pz}`);
+    model.setAttribute('rotation', `${state.rx} ${state.ry} ${state.rz}`);
+    model.setAttribute('scale',    `${state.s} ${state.s} ${state.s}`);
+  }
+
+  function renderDisplay() {
+    Object.keys(state).forEach(k => {
+      const el = document.getElementById('dbg-' + k);
+      if (el) el.textContent = state[k].toFixed(decimals[k]);
+    });
+  }
+
+  document.getElementById('dbg-toggle-btn').addEventListener('click', () => {
+    const c = document.getElementById('dbg-content');
+    c.style.display = c.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.querySelectorAll('.dbg-minus, .dbg-plus').forEach(btn => {
+    const key  = btn.dataset.key;
+    const sign = btn.classList.contains('dbg-plus') ? 1 : -1;
+    let timer;
+
+    const step = () => {
+      state[key] = parseFloat((state[key] + sign * steps[key]).toFixed(4));
+      renderDisplay();
+      applyToModel();
+    };
+
+    btn.addEventListener('touchstart', e => { e.preventDefault(); step(); timer = setInterval(step, 150); }, { passive: false });
+    btn.addEventListener('touchend',   () => clearInterval(timer));
+    btn.addEventListener('mousedown',  () => { step(); timer = setInterval(step, 150); });
+    btn.addEventListener('mouseup',    () => clearInterval(timer));
+    btn.addEventListener('mouseleave', () => clearInterval(timer));
+  });
+
+  document.getElementById('dbg-save-btn').addEventListener('click', () => {
+    localStorage.setItem('germoglio-debug', JSON.stringify(state));
+    const f = k => state[k].toFixed(decimals[k]);
+    document.getElementById('dbg-modal-text').textContent =
+      `position="${f('px')} ${f('py')} ${f('pz')}"\nrotation="${f('rx')} ${f('ry')} ${f('rz')}"\nscale="${f('s')} ${f('s')} ${f('s')}"`;
+    document.getElementById('dbg-modal-overlay').classList.add('visible');
+  });
+
+  document.getElementById('dbg-modal-close').addEventListener('click', () => {
+    document.getElementById('dbg-modal-overlay').classList.remove('visible');
+  });
+
+  renderDisplay();
+  applyToModel();
+})();
