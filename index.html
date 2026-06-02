@@ -106,7 +106,7 @@
       <a-asset-item id="vaso-past-glb"    src="models/vaso-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="plant-glb"        src="models/plantgrowing.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="plant-glb"        src="models/piantina.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -132,7 +132,7 @@
 
     <!-- Target 2: Piantina (animazione GLB) -->
     <a-entity mindar-image-target="targetIndex: 2" id="ar-target-piantina">
-      <a-gltf-model id="plant-model" src="#plant-glb" position="0 0 0" scale="1 1 1"
+      <a-gltf-model id="plant-model" src="#plant-glb" position="0 0 0" scale="1 1 1" rotation="-90 0 0"
                     animation-mixer="clip: *; loop: once; clampWhenFinished: true;">
       </a-gltf-model>
     </a-entity>
