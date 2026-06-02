@@ -162,13 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
     targetPiantina.addEventListener('targetFound', () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
       activeTarget = 'piantina';
-      showUI();
-      // Riavvia animazione 1.5s dopo che il marker è stato inquadrato
+      scanHint.classList.add('hidden');
       if (plantModel) {
-        plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true; timeScale: 0;');
+        plantModel.removeAttribute('animation-mixer');
         setTimeout(() => {
-          plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true; timeScale: 1;');
-        }, 1500);
+          plantModel.setAttribute('animation-mixer', 'clip: *; loop: once; clampWhenFinished: true;');
+        }, 100);
       }
     });
     targetPiantina.addEventListener('targetLost', () => {
