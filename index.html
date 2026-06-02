@@ -150,12 +150,14 @@
 
   </a-scene>
 
-  <!-- ===== DEBUG GERMOGLIO — rimuovere in produzione ===== -->
+  <!-- ===== DEBUG PANEL — rimuovere in produzione ===== -->
   <style>
     #dbg-panel { position: fixed; top: 10px; left: 10px; z-index: 9999; font-family: monospace; font-size: 13px; }
     #dbg-toggle-btn { background: #1a1a1a; color: #4cff4c; border: 1px solid #4cff4c; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 12px; }
     #dbg-content { display: none; background: rgba(10,10,10,0.92); color: #4cff4c; padding: 12px; border-radius: 6px; margin-top: 4px; min-width: 190px; border: 1px solid #333; }
-    .dbg-section { color: #fff; font-weight: bold; font-size: 11px; letter-spacing: 1px; margin: 8px 0 4px; }
+    #dbg-ctx-label { color: #fff; font-weight: bold; font-size: 12px; letter-spacing: 1px; margin-bottom: 8px; min-height: 16px; }
+    #dbg-no-target { color: #666; font-style: italic; font-size: 12px; }
+    .dbg-section { color: #aaa; font-weight: bold; font-size: 10px; letter-spacing: 1px; margin: 8px 0 4px; text-transform: uppercase; }
     .dbg-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
     .dbg-axis { width: 12px; color: #888; }
     .dbg-val { min-width: 44px; text-align: center; color: #4cff4c; }
@@ -164,25 +166,28 @@
     #dbg-save-btn { margin-top: 10px; width: 100%; background: #c93327; color: #fff; border: none; padding: 10px; font-size: 13px; font-family: monospace; cursor: pointer; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
     #dbg-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 10000; align-items: center; justify-content: center; }
     #dbg-modal-overlay.visible { display: flex; }
-    #dbg-modal-box { background: #111; color: #4cff4c; padding: 20px; border-radius: 8px; max-width: 90%; font-family: monospace; font-size: 13px; }
+    #dbg-modal-box { background: #111; color: #4cff4c; padding: 20px; border-radius: 8px; max-width: 90%; font-family: monospace; font-size: 12px; }
     #dbg-modal-box pre { white-space: pre-wrap; word-break: break-all; margin: 0; background: #000; padding: 12px; border-radius: 4px; color: #fff; line-height: 1.8; }
     #dbg-modal-close { margin-top: 12px; width: 100%; background: #333; color: #fff; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-family: monospace; }
   </style>
 
   <div id="dbg-panel">
-    <button id="dbg-toggle-btn">🌱 DEBUG</button>
+    <button id="dbg-toggle-btn">🔧 DEBUG</button>
     <div id="dbg-content" style="display:none">
-      <div class="dbg-section">POSIZIONE</div>
-      <div class="dbg-row"><span class="dbg-axis">X</span><button class="dbg-btn dbg-minus" data-key="px">−</button><span class="dbg-val" id="dbg-px">0.00</span><button class="dbg-btn dbg-plus" data-key="px">+</button></div>
-      <div class="dbg-row"><span class="dbg-axis">Y</span><button class="dbg-btn dbg-minus" data-key="py">−</button><span class="dbg-val" id="dbg-py">0.00</span><button class="dbg-btn dbg-plus" data-key="py">+</button></div>
-      <div class="dbg-row"><span class="dbg-axis">Z</span><button class="dbg-btn dbg-minus" data-key="pz">−</button><span class="dbg-val" id="dbg-pz">0.00</span><button class="dbg-btn dbg-plus" data-key="pz">+</button></div>
-      <div class="dbg-section">ROTAZIONE</div>
-      <div class="dbg-row"><span class="dbg-axis">X</span><button class="dbg-btn dbg-minus" data-key="rx">−</button><span class="dbg-val" id="dbg-rx">0</span><button class="dbg-btn dbg-plus" data-key="rx">+</button></div>
-      <div class="dbg-row"><span class="dbg-axis">Y</span><button class="dbg-btn dbg-minus" data-key="ry">−</button><span class="dbg-val" id="dbg-ry">0</span><button class="dbg-btn dbg-plus" data-key="ry">+</button></div>
-      <div class="dbg-row"><span class="dbg-axis">Z</span><button class="dbg-btn dbg-minus" data-key="rz">−</button><span class="dbg-val" id="dbg-rz">0</span><button class="dbg-btn dbg-plus" data-key="rz">+</button></div>
-      <div class="dbg-section">SCALA</div>
-      <div class="dbg-row"><span class="dbg-axis">S</span><button class="dbg-btn dbg-minus" data-key="s">−</button><span class="dbg-val" id="dbg-s">1.0</span><button class="dbg-btn dbg-plus" data-key="s">+</button></div>
-      <button id="dbg-save-btn">SALVA</button>
+      <div id="dbg-ctx-label">— nessun marker —</div>
+      <div id="dbg-controls" style="display:none">
+        <div class="dbg-section">Posizione</div>
+        <div class="dbg-row"><span class="dbg-axis">X</span><button class="dbg-btn dbg-minus" data-key="px">−</button><span class="dbg-val" id="dbg-px">0.00</span><button class="dbg-btn dbg-plus" data-key="px">+</button></div>
+        <div class="dbg-row"><span class="dbg-axis">Y</span><button class="dbg-btn dbg-minus" data-key="py">−</button><span class="dbg-val" id="dbg-py">0.00</span><button class="dbg-btn dbg-plus" data-key="py">+</button></div>
+        <div class="dbg-row"><span class="dbg-axis">Z</span><button class="dbg-btn dbg-minus" data-key="pz">−</button><span class="dbg-val" id="dbg-pz">0.00</span><button class="dbg-btn dbg-plus" data-key="pz">+</button></div>
+        <div class="dbg-section">Rotazione</div>
+        <div class="dbg-row"><span class="dbg-axis">X</span><button class="dbg-btn dbg-minus" data-key="rx">−</button><span class="dbg-val" id="dbg-rx">0</span><button class="dbg-btn dbg-plus" data-key="rx">+</button></div>
+        <div class="dbg-row"><span class="dbg-axis">Y</span><button class="dbg-btn dbg-minus" data-key="ry">−</button><span class="dbg-val" id="dbg-ry">0</span><button class="dbg-btn dbg-plus" data-key="ry">+</button></div>
+        <div class="dbg-row"><span class="dbg-axis">Z</span><button class="dbg-btn dbg-minus" data-key="rz">−</button><span class="dbg-val" id="dbg-rz">0</span><button class="dbg-btn dbg-plus" data-key="rz">+</button></div>
+        <div class="dbg-section">Scala</div>
+        <div class="dbg-row"><span class="dbg-axis">S</span><button class="dbg-btn dbg-minus" data-key="s">−</button><span class="dbg-val" id="dbg-s">1.0</span><button class="dbg-btn dbg-plus" data-key="s">+</button></div>
+        <button id="dbg-save-btn">SALVA TUTTO</button>
+      </div>
     </div>
   </div>
 
@@ -193,7 +198,7 @@
       <button id="dbg-modal-close">CHIUDI</button>
     </div>
   </div>
-  <!-- ===== fine debug germoglio ===== -->
+  <!-- ===== fine debug panel ===== -->
 
 </body>
 </html>

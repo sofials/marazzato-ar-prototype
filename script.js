@@ -143,9 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 1 (vase) trovato');
       activeTarget = 'vase';
       showUI();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'vaso' }));
     });
     targetVase.addEventListener('targetLost', () => {
-      if (activeTarget === 'vase') { activeTarget = null; hideUI(); }
+      if (activeTarget === 'vase') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
     });
   }
   if (targetDisegno) {
@@ -163,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
       activeTarget = 'piantina';
       scanHint.classList.add('hidden');
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'germoglio' }));
       if (plantModel) {
         plantModel.removeAttribute('animation-mixer');
         setTimeout(() => {
@@ -171,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     targetPiantina.addEventListener('targetLost', () => {
-      if (activeTarget === 'piantina') { activeTarget = null; hideUI(); }
+      if (activeTarget === 'piantina') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
     });
   }
 
@@ -209,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const oldTimeline = currentTimeline;
     currentTimeline = timeline;
+    document.dispatchEvent(new CustomEvent('mm-timeline', { detail: timeline }));
     const fadeTime = 250;
 
     // Aggiorna UI ghiera sempre
@@ -327,44 +330,108 @@ document.addEventListener("DOMContentLoaded", () => {
   tickFuture.addEventListener('click',  () => { if (!isFading) { setNeedleAngle(angles.future, true);  applyTimeline('future');  } });
 });
 
-// === DEBUG GERMOGLIO (rimuovere in produzione) ===
+// === DEBUG PANEL (rimuovere in produzione) ===
 (function () {
-  const model = document.getElementById('plant-model');
-  if (!model) return;
-
   const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1 };
   const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1 };
-  const state    = { px: 0,    py: 0,    pz: 0,    rx: 90, ry: 0, rz: 0, s: 0.3 };
+
+  const defaultState = (overrides) => Object.assign({ px: 0, py: 0, pz: 0, rx: 0, ry: 0, rz: 0, s: 1 }, overrides);
+
+  const germoglioState = defaultState({ rx: 90, s: 0.3 });
+  const vasoStates = {
+    past:    defaultState(),
+    present: defaultState(),
+    future:  defaultState(),
+  };
 
   try {
-    const saved = localStorage.getItem('germoglio-debug');
-    if (saved) Object.assign(state, JSON.parse(saved));
+    const g = localStorage.getItem('germoglio-debug');
+    if (g) Object.assign(germoglioState, JSON.parse(g));
+    const v = localStorage.getItem('vaso-debug');
+    if (v) Object.assign(vasoStates, JSON.parse(v));
   } catch (e) {}
 
+  let activeDbgTarget = null;
+  let activeTimeline  = 'present';
+
+  const timelineLabels = { past: 'PASSATO', present: 'PRESENTE', future: 'FUTURO' };
+
+  function currentState() {
+    if (activeDbgTarget === 'germoglio') return germoglioState;
+    if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
+    return null;
+  }
+
+  function currentModel() {
+    if (activeDbgTarget === 'germoglio') return document.getElementById('plant-model');
+    if (activeDbgTarget === 'vaso')      return document.getElementById(`vase-${activeTimeline}`);
+    return null;
+  }
+
   function applyToModel() {
+    const state = currentState();
+    const model = currentModel();
+    if (!state || !model) return;
     model.setAttribute('position', `${state.px} ${state.py} ${state.pz}`);
     model.setAttribute('rotation', `${state.rx} ${state.ry} ${state.rz}`);
     model.setAttribute('scale',    `${state.s} ${state.s} ${state.s}`);
   }
 
   function renderDisplay() {
+    const state = currentState();
+    if (!state) return;
     Object.keys(state).forEach(k => {
       const el = document.getElementById('dbg-' + k);
       if (el) el.textContent = state[k].toFixed(decimals[k]);
     });
   }
 
+  function updateContext() {
+    const label    = document.getElementById('dbg-ctx-label');
+    const controls = document.getElementById('dbg-controls');
+    if (activeDbgTarget === 'germoglio') {
+      label.textContent    = '🌱 GERMOGLIO';
+      controls.style.display = 'block';
+      renderDisplay();
+    } else if (activeDbgTarget === 'vaso') {
+      label.textContent    = `🏺 VASO — ${timelineLabels[activeTimeline]}`;
+      controls.style.display = 'block';
+      renderDisplay();
+    } else {
+      label.textContent    = '— nessun marker —';
+      controls.style.display = 'none';
+    }
+  }
+
+  // Eventi dal sistema AR
+  document.addEventListener('mm-target', e => {
+    activeDbgTarget = e.detail;
+    updateContext();
+  });
+
+  document.addEventListener('mm-timeline', e => {
+    activeTimeline = e.detail;
+    if (activeDbgTarget === 'vaso') {
+      updateContext();
+      applyToModel();
+    }
+  });
+
+  // Toggle pannello
   document.getElementById('dbg-toggle-btn').addEventListener('click', () => {
     const c = document.getElementById('dbg-content');
     c.style.display = c.style.display === 'none' ? 'block' : 'none';
   });
 
+  // Pulsanti +/−
   document.querySelectorAll('.dbg-minus, .dbg-plus').forEach(btn => {
     const key  = btn.dataset.key;
     const sign = btn.classList.contains('dbg-plus') ? 1 : -1;
     let timer;
 
     const step = () => {
+      const state = currentState();
+      if (!state) return;
       state[key] = parseFloat((state[key] + sign * steps[key]).toFixed(4));
       renderDisplay();
       applyToModel();
@@ -377,11 +444,22 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener('mouseleave', () => clearInterval(timer));
   });
 
+  // Salva tutto
   document.getElementById('dbg-save-btn').addEventListener('click', () => {
-    localStorage.setItem('germoglio-debug', JSON.stringify(state));
-    const f = k => state[k].toFixed(decimals[k]);
-    document.getElementById('dbg-modal-text').textContent =
-      `position="${f('px')} ${f('py')} ${f('pz')}"\nrotation="${f('rx')} ${f('ry')} ${f('rz')}"\nscale="${f('s')} ${f('s')} ${f('s')}"`;
+    localStorage.setItem('germoglio-debug', JSON.stringify(germoglioState));
+    localStorage.setItem('vaso-debug',      JSON.stringify(vasoStates));
+
+    const fmt = (s) =>
+      `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
+      `rotation="${s.rx} ${s.ry} ${s.rz}"\n` +
+      `scale="${s.s.toFixed(1)} ${s.s.toFixed(1)} ${s.s.toFixed(1)}"`;
+
+    let text = `=== GERMOGLIO ===\n${fmt(germoglioState)}\n\n`;
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== VASO ${timelineLabels[t]} ===\n${fmt(vasoStates[t])}\n\n`;
+    });
+
+    document.getElementById('dbg-modal-text').textContent = text.trim();
     document.getElementById('dbg-modal-overlay').classList.add('visible');
   });
 
@@ -389,6 +467,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('dbg-modal-overlay').classList.remove('visible');
   });
 
-  renderDisplay();
-  applyToModel();
+  // Applica valori salvati al caricamento
+  const plantModel = document.getElementById('plant-model');
+  if (plantModel) {
+    plantModel.setAttribute('position', `${germoglioState.px} ${germoglioState.py} ${germoglioState.pz}`);
+    plantModel.setAttribute('rotation', `${germoglioState.rx} ${germoglioState.ry} ${germoglioState.rz}`);
+    plantModel.setAttribute('scale',    `${germoglioState.s} ${germoglioState.s} ${germoglioState.s}`);
+  }
+  ['past', 'present', 'future'].forEach(t => {
+    const model = document.getElementById(`vase-${t}`);
+    const s = vasoStates[t];
+    if (model) {
+      model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
+      model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
+      model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
+    }
+  });
+
+  updateContext();
 })();
