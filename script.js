@@ -339,9 +339,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const germoglioState = defaultState({ rx: 90, s: 0.3 });
   const vasoStates = {
-    past:    defaultState(),
-    present: defaultState(),
-    future:  defaultState(),
+    past:    defaultState({ px: -4.10, py: -0.60, pz: -0.35, rx: 70, rz: 10, s: 3.8 }),
+    present: defaultState({ px: -7.10, py: -0.25, pz: -1.45, rx: 70, rz: 10, s: 5.0 }),
+    future:  defaultState({ px: -3.15, py: -0.60, pz: -0.35, rx: 70, rz: 10, s: 3.8 }),
   };
 
   try {

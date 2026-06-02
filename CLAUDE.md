@@ -22,7 +22,7 @@ MARAZZATO-AR-PROTOTYPE/
 │   ├── logo.png          # Brand logo shown in intro card
 │   └── targets.mind      # Compiled MindAR image targets (ALL markers must be here)
 ├── models/
-│   ├── plantgrowing.glb  # Animated plant (target 2)
+│   ├── germoglio.glb     # Animated sprout (target 2) — rotation="90 0 0" scale="0.3 0.3 0.3"
 │   ├── vaso-past.glb     # Vase — past state (target 1)
 │   ├── vaso-present.glb  # Vase — present state (target 1)
 │   └── vaso-future.glb   # Vase — future state (target 1)
@@ -40,9 +40,9 @@ MARAZZATO-AR-PROTOTYPE/
 | targetIndex | Marker label | Entity ID             | Pattern | Status        |
 |-------------|--------------|----------------------|---------|---------------|
 | 0           | 01 FOTO      | ar-target-photo      | A       | ✅ working    |
-| 1           | 02 VASO      | ar-target-vase       | B (GLB) | ⚠️ needs sync fix |
-| 2           | 03 PIANTINA  | ar-target-piantina   | anim    | ⚠️ dial should be hidden |
-| 3           | 04 CALENDARIO| ar-target-calendario | A       | ❌ empty entity |
+| 1           | 02 VASO      | ar-target-vase       | B (GLB) | ✅ working — calibrated per-GLB pos/rot/scale |
+| 2           | 03 PIANTINA  | ar-target-piantina   | D (anim)| ✅ working — germoglio.glb, rot 90 0 0, scale 0.3 |
+| 3           | 04 CALENDARIO| ar-target-calendario | A       | ❌ empty entity — textures da aggiungere |
 | 4           | 05 DISEGNO   | ar-target-disegno    | A       | ✅ working    |
 | 5           | 06 POST-IT   | ar-target-postit     | A       | ❌ not yet    |
 | 6           | 07 DIARIO    | ar-target-diario     | A       | ❌ not yet    |
@@ -66,10 +66,11 @@ with MindAR Image Compiler including ALL markers in the correct index order.
 - Listener: `targetFound` → `activeTarget = '<name>'` + `showUI()`
 
 ### Pattern B — GLB model swap (vaso)
-- 3 GLB models, one per timeline state
+- 3 GLB models, one per timeline state — each with calibrated position/rotation/scale
 - Toggle `visible` + `model-opacity` component for fade
 - `applyTimeline` branch: fade old model out → set visible false → set new visible true → fade in
-- **FIX NEEDED**: on `targetFound`, sync visible model to `currentTimeline` instantly
+- Wrapper `#vase-wrapper` at `position="0 0 0" scale="1 1 1"` — all transforms on individual models
+- Calibrated values (from debug session): past `pos -4.10 -0.60 -0.35 rot 70 0 10 scale 3.8`, present `pos -7.10 -0.25 -1.45 rot 70 0 10 scale 5.0`, future `pos -3.15 -0.60 -0.35 rot 70 0 10 scale 3.8`
 
 ### Pattern C — Factual card (info camion 1/2/3)
 - NO ghiera/dial — these cards show static archival content
