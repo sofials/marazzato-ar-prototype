@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1 };
   const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1 };
-  const state    = { px: 0,    py: 0,    pz: 0,    rx: 0, ry: 0, rz: 0, s:   1 };
+  const state    = { px: 0,    py: 0,    pz: 0,    rx: 90, ry: 0, rz: 0, s: 0.3 };
 
   try {
     const saved = localStorage.getItem('germoglio-debug');
