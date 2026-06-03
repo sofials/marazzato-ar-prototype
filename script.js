@@ -88,6 +88,47 @@ document.addEventListener("DOMContentLoaded", () => {
   currentTimeline = 'present';
 
   // === AVVIO AR E RICHIESTA FOTOCAMERA ===
+
+  function getCameraInstructions(reason) {
+    if (reason === 'timeout') return 'Caricamento lento.<br>Controlla la connessione e riprova.';
+    if (reason !== 'denied')  return 'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
+
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isIOS) {
+      if (/CriOS/.test(ua))  return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Vai in <strong>Impostazioni → Chrome</strong></li><li>Tocca <strong>Fotocamera → Consenti</strong></li><li>Torna qui e <strong>ricarica</strong></li></ol>';
+      if (/FxiOS/.test(ua))  return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Vai in <strong>Impostazioni → Firefox</strong></li><li>Tocca <strong>Fotocamera → Consenti</strong></li><li>Torna qui e <strong>ricarica</strong></li></ol>';
+      if (/EdgiOS/.test(ua)) return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Vai in <strong>Impostazioni → Edge</strong></li><li>Tocca <strong>Fotocamera → Consenti</strong></li><li>Torna qui e <strong>ricarica</strong></li></ol>';
+      // Safari iOS (default)
+      return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Vai in <strong>Impostazioni → Safari</strong></li><li>Tocca <strong>Fotocamera → Consenti</strong></li><li>Torna qui e <strong>ricarica</strong></li></ol>';
+    }
+
+    // Android
+    if (/SamsungBrowser/.test(ua)) return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Tocca <strong>🔒</strong> nella barra → <strong>Autorizzazioni → Fotocamera → Consenti</strong></li><li>Oppure: <strong>Impostazioni → App → Samsung Internet → Autorizzazioni → Fotocamera</strong></li><li><strong>Ricarica</strong> la pagina</li></ol>';
+    if (/Firefox/.test(ua))       return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Tocca <strong>🔒</strong> nella barra → <strong>Autorizzazioni sito → Fotocamera → Consenti</strong></li><li>Oppure: <strong>Impostazioni Firefox → Autorizzazioni sito → Fotocamera</strong></li><li><strong>Ricarica</strong> la pagina</li></ol>';
+    if (/EdgA/.test(ua))          return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Tocca <strong>🔒</strong> nella barra → <strong>Autorizzazioni → Fotocamera → Consenti</strong></li><li>Oppure: <strong>Impostazioni → App → Edge → Autorizzazioni → Fotocamera</strong></li><li><strong>Ricarica</strong> la pagina</li></ol>';
+    // Chrome Android (default Android)
+    return 'Fotocamera bloccata.<br><br><ol class="permission-steps"><li>Tocca <strong>🔒</strong> nella barra dell\'indirizzo → <strong>Autorizzazioni → Fotocamera → Consenti</strong></li><li>Oppure: <strong>Impostazioni → App → Chrome → Autorizzazioni → Fotocamera</strong></li><li><strong>Ricarica</strong> la pagina</li></ol>';
+  }
+
+  function showDeniedInstructions(reason) {
+    introDefault.style.display = 'none';
+    introDenied.style.display = 'block';
+    intro.classList.remove('hidden');
+    introDenied.querySelector('.instructions').innerHTML = getCameraInstructions(reason);
+  }
+
+  // Controlla subito se la camera è già bloccata — funziona su Chrome/Android, non su iOS (Safari non supporta permissions API per camera)
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: 'camera' }).then(status => {
+      if (status.state === 'denied') showDeniedInstructions('denied');
+      status.onchange = () => {
+        if (status.state === 'denied') showDeniedInstructions('denied');
+      };
+    }).catch(() => {});
+  }
+
   async function requestCameraAndStart() {
   try {
     introDefault.style.display = 'none';
@@ -115,19 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn('Errore avvio AR:', err.name, err.message);
     scanHint.classList.add('hidden');
     intro.classList.remove('hidden');
-    introDenied.style.display = 'block';
-
-    // Differenzia il messaggio per tipo di errore
-    const instructions = introDenied.querySelector('.instructions');
     if (err.name === 'NotAllowedError') {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      instructions.innerHTML = isIOS
-        ? 'Fotocamera bloccata.<br>Vai in <strong>Impostazioni → Safari → Fotocamera → Consenti</strong>, poi torna qui.'
-        : 'Fotocamera bloccata.<br>Tocca l\'icona 🔒 nella barra dell\'indirizzo e consenti la fotocamera.';
+      showDeniedInstructions('denied');
     } else if (err.message === 'SceneTimeout') {
-      instructions.innerHTML = 'Caricamento lento.<br>Controlla la connessione e riprova.';
+      showDeniedInstructions('timeout');
     } else {
-      instructions.innerHTML = 'Fotocamera non accessibile.<br>Assicurati di usare <strong>HTTPS</strong> e un browser aggiornato.';
+      showDeniedInstructions('other');
     }
   }
 }
