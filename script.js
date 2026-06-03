@@ -166,9 +166,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 3 (calendario) trovato');
       activeTarget = 'calendario';
       showUI();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'calendario' }));
     });
     targetCalendario.addEventListener('targetLost', () => {
-      if (activeTarget === 'calendario') { activeTarget = null; hideUI(); }
+      if (activeTarget === 'calendario') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
     });
   }
   if (targetPiantina) {
@@ -350,8 +351,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // === DEBUG PANEL (rimuovere in produzione) ===
 (function () {
-  const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1 };
-  const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1 };
+  const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1, w: 0.05, h: 0.05 };
+  const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1, w: 2,    h: 2    };
 
   const defaultState = (overrides) => Object.assign({ px: 0, py: 0, pz: 0, rx: 0, ry: 0, rz: 0, s: 1 }, overrides);
 
@@ -361,12 +362,15 @@ document.addEventListener("DOMContentLoaded", () => {
     present: defaultState({ px: -7.80, py:  0.45, pz: -1.45, rx: 70, s: 5.0 }),
     future:  defaultState({ px: -3.20, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
   };
+  const calendarioState = Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 });
 
   try {
     const g = localStorage.getItem('germoglio-debug');
     if (g) Object.assign(germoglioState, JSON.parse(g));
     const v = localStorage.getItem('vaso-debug');
     if (v) Object.assign(vasoStates, JSON.parse(v));
+    const c = localStorage.getItem('calendario-debug');
+    if (c) Object.assign(calendarioState, JSON.parse(c));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -377,12 +381,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function currentState() {
     if (activeDbgTarget === 'germoglio') return germoglioState;
     if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
+    if (activeDbgTarget === 'calendario') return calendarioState;
     return null;
   }
 
   function currentModel() {
     if (activeDbgTarget === 'germoglio') return document.getElementById('plant-model');
     if (activeDbgTarget === 'vaso')      return document.getElementById(`vase-${activeTimeline}`);
+    if (activeDbgTarget === 'calendario') return document.getElementById('calendario-wrapper');
     return null;
   }
 
@@ -393,6 +399,13 @@ document.addEventListener("DOMContentLoaded", () => {
     model.setAttribute('position', `${state.px} ${state.py} ${state.pz}`);
     model.setAttribute('rotation', `${state.rx} ${state.ry} ${state.rz}`);
     model.setAttribute('scale',    `${state.s} ${state.s} ${state.s}`);
+    if (activeDbgTarget === 'calendario') {
+      const plane = document.getElementById('calendario-plane');
+      if (plane) {
+        plane.setAttribute('width',  state.w);
+        plane.setAttribute('height', state.h);
+      }
+    }
   }
 
   function renderDisplay() {
@@ -407,17 +420,25 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateContext() {
     const label    = document.getElementById('dbg-ctx-label');
     const controls = document.getElementById('dbg-controls');
+    const planeDims = document.getElementById('dbg-plane-dims');
     if (activeDbgTarget === 'germoglio') {
-      label.textContent    = '🌱 GERMOGLIO';
-      controls.style.display = 'block';
+      label.textContent       = '🌱 GERMOGLIO';
+      controls.style.display  = 'block';
+      planeDims.style.display = 'none';
       renderDisplay();
     } else if (activeDbgTarget === 'vaso') {
-      label.textContent    = `🏺 VASO — ${timelineLabels[activeTimeline]}`;
-      controls.style.display = 'block';
+      label.textContent       = `🏺 VASO — ${timelineLabels[activeTimeline]}`;
+      controls.style.display  = 'block';
+      planeDims.style.display = 'none';
+      renderDisplay();
+    } else if (activeDbgTarget === 'calendario') {
+      label.textContent       = '📅 CALENDARIO';
+      controls.style.display  = 'block';
+      planeDims.style.display = 'block';
       renderDisplay();
     } else {
-      label.textContent    = '— nessun marker —';
-      controls.style.display = 'none';
+      label.textContent       = '— nessun marker —';
+      controls.style.display  = 'none';
     }
   }
 
@@ -464,18 +485,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Salva tutto
   document.getElementById('dbg-save-btn').addEventListener('click', () => {
-    localStorage.setItem('germoglio-debug', JSON.stringify(germoglioState));
-    localStorage.setItem('vaso-debug',      JSON.stringify(vasoStates));
+    localStorage.setItem('germoglio-debug',  JSON.stringify(germoglioState));
+    localStorage.setItem('vaso-debug',       JSON.stringify(vasoStates));
+    localStorage.setItem('calendario-debug', JSON.stringify(calendarioState));
 
     const fmt = (s) =>
       `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
       `rotation="${s.rx} ${s.ry} ${s.rz}"\n` +
       `scale="${s.s.toFixed(1)} ${s.s.toFixed(1)} ${s.s.toFixed(1)}"`;
 
+    const fmtPlane = (s) =>
+      `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
+      `rotation="${s.rx} ${s.ry} ${s.rz}"\n` +
+      `scale="${s.s.toFixed(1)} ${s.s.toFixed(1)} ${s.s.toFixed(1)}"\n` +
+      `width="${s.w.toFixed(2)}" height="${s.h.toFixed(2)}"`;
+
     let text = `=== GERMOGLIO ===\n${fmt(germoglioState)}\n\n`;
     ['past', 'present', 'future'].forEach(t => {
       text += `=== VASO ${timelineLabels[t]} ===\n${fmt(vasoStates[t])}\n\n`;
     });
+    text += `=== CALENDARIO ===\n${fmtPlane(calendarioState)}\n\n`;
 
     document.getElementById('dbg-modal-text').textContent = text.trim();
     document.getElementById('dbg-modal-overlay').classList.add('visible');
@@ -501,6 +530,18 @@ document.addEventListener("DOMContentLoaded", () => {
       model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
     }
   });
+  const calWrapper = document.getElementById('calendario-wrapper');
+  if (calWrapper) {
+    const cs = calendarioState;
+    calWrapper.setAttribute('position', `${cs.px} ${cs.py} ${cs.pz}`);
+    calWrapper.setAttribute('rotation', `${cs.rx} ${cs.ry} ${cs.rz}`);
+    calWrapper.setAttribute('scale',    `${cs.s} ${cs.s} ${cs.s}`);
+    const plane = document.getElementById('calendario-plane');
+    if (plane) {
+      plane.setAttribute('width',  cs.w);
+      plane.setAttribute('height', cs.h);
+    }
+  }
 
   updateContext();
 })();
