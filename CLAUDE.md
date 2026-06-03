@@ -42,7 +42,7 @@ MARAZZATO-AR-PROTOTYPE/
 | 0           | 01 FOTO      | ar-target-photo      | A       | ✅ working    |
 | 1           | 02 VASO      | ar-target-vase       | B (GLB) | ✅ working — calibrated per-GLB pos/rot/scale |
 | 2           | 03 PIANTINA  | ar-target-piantina   | D (anim)| ✅ working — germoglio.glb, rot 90 0 0, scale 0.3 |
-| 3           | 04 CALENDARIO| ar-target-calendario | A       | ❌ empty entity — textures da aggiungere |
+| 3           | 04 CALENDARIO| ar-target-calendario | A       | ✅ codice pronto — textures da produrre (calendario-past/present/future.jpg) |
 | 4           | 05 DISEGNO   | ar-target-disegno    | A       | ✅ working    |
 | 5           | 06 POST-IT   | ar-target-postit     | A       | ❌ not yet    |
 | 6           | 07 DIARIO    | ar-target-diario     | A       | ❌ not yet    |
