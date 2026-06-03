@@ -37,7 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetVase = document.getElementById('ar-target-vase');
   const targetDisegno = document.getElementById('ar-target-disegno');
   const targetCalendario = document.getElementById('ar-target-calendario');
-  const targetPiantina = document.getElementById('ar-target-piantina');
+  const targetCamion1   = document.getElementById('ar-target-camion1');
+  const infoCamion1     = document.getElementById('info-card-camion1');
+  const targetPiantina  = document.getElementById('ar-target-piantina');
   const plantModel = document.getElementById('plant-model');
 
   const photoPlane = document.getElementById('photo-plane');
@@ -170,6 +172,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     targetCalendario.addEventListener('targetLost', () => {
       if (activeTarget === 'calendario') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
+    });
+  }
+  if (targetCamion1 && infoCamion1) {
+    targetCamion1.addEventListener('targetFound', () => {
+      console.log('🚒 TARGET 8 (camion1) trovato');
+      activeTarget = 'camion1';
+      scanHint.classList.add('hidden');
+      infoCamion1.classList.remove('hidden');
+    });
+    targetCamion1.addEventListener('targetLost', () => {
+      if (activeTarget === 'camion1') {
+        activeTarget = null;
+        infoCamion1.classList.add('hidden');
+        scanHint.classList.remove('hidden');
+      }
     });
   }
   if (targetPiantina) {
@@ -318,9 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function moveDrag(clientX, clientY) {
     if (!isDragging || isFading) return;
     const { x, y } = getSvgCoords(clientX, clientY);
-    const timeline = timelineFromAngle(angleFromPoint(x, y));
-    setNeedleAngle(angles[timeline], false);
-    applyTimeline(timeline);
+    const angle = angleFromPoint(x, y);
+    setNeedleAngle(angle, false);
+    applyTimeline(timelineFromAngle(angle));
   }
 
   function endDrag() {

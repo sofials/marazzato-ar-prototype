@@ -86,6 +86,29 @@
     Alassio, agosto — 1971
   </div>
 
+  <!-- Info Card: Camion 1 — FIAT 640 N -->
+  <div id="info-card-camion1" class="info-card hidden">
+    <div class="info-tag">09 — Veicolo storico</div>
+    <h2 class="info-title">FIAT 640 N</h2>
+    <div class="info-year">Italia · 1950</div>
+    <div class="info-divider"></div>
+    <dl class="info-specs">
+      <div class="info-spec-row">
+        <dt>Motore</dt>
+        <dd>Diesel iniezione diretta · 6 cil. · 6.032 cc · 72 CV</dd>
+      </div>
+      <div class="info-spec-row">
+        <dt>Portata</dt>
+        <dd>4,5 tonnellate</dd>
+      </div>
+      <div class="info-spec-row">
+        <dt>Vel. max</dt>
+        <dd>65 km/h</dd>
+      </div>
+    </dl>
+    <p class="info-note">Allestimento antincendio su telaio commerciale — pratica standard nei VVF italiani degli anni '50, quando i mezzi dedicati erano ancora rari.</p>
+  </div>
+
   <!-- Scena AR -->
   <a-scene mindar-image="imageTargetSrc: assets/targets.mind; autoStart: false; uiLoading: no; uiError: no; uiScanning: no; filterMinCF: 0.0001; filterBeta: 0.001;"
            color-space="sRGB"
@@ -147,6 +170,9 @@
         <a-plane id="calendario-plane" src="#tex-calendario-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
       </a-entity>
     </a-entity>
+
+    <!-- Target 8: Info Camion 1 (Pattern C — nessun layer AR, solo overlay HTML) -->
+    <a-entity mindar-image-target="targetIndex: 8" id="ar-target-camion1"></a-entity>
 
     <!-- Target 4: Disegno -->
     <a-entity mindar-image-target="targetIndex: 4" id="ar-target-disegno">
