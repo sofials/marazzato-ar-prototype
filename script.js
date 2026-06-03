@@ -299,9 +299,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function moveDrag(clientX, clientY) {
     if (!isDragging || isFading) return;
     const { x, y } = getSvgCoords(clientX, clientY);
-    const angle = angleFromPoint(x, y);
-    setNeedleAngle(angle, false);
-    applyTimeline(timelineFromAngle(angle));
+    const timeline = timelineFromAngle(angleFromPoint(x, y));
+    setNeedleAngle(angles[timeline], false);
+    applyTimeline(timeline);
   }
 
   function endDrag() {
