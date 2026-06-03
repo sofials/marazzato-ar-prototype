@@ -163,6 +163,9 @@
     #dbg-toggle-btn { background: #1a1a1a; color: #4cff4c; border: 1px solid #4cff4c; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 12px; }
     #dbg-content { display: none; background: rgba(10,10,10,0.92); color: #4cff4c; padding: 12px; border-radius: 6px; margin-top: 4px; min-width: 190px; border: 1px solid #333; }
     #dbg-ctx-label { color: #fff; font-weight: bold; font-size: 12px; letter-spacing: 1px; margin-bottom: 8px; min-height: 16px; }
+    #dbg-target-selector { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+    .dbg-target-btn { background: #222; color: #888; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 10px; cursor: pointer; letter-spacing: 0.5px; }
+    .dbg-target-btn.active { background: #4cff4c; color: #000; border-color: #4cff4c; }
     #dbg-no-target { color: #666; font-style: italic; font-size: 12px; }
     .dbg-section { color: #aaa; font-weight: bold; font-size: 10px; letter-spacing: 1px; margin: 8px 0 4px; text-transform: uppercase; }
     .dbg-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
@@ -181,6 +184,11 @@
   <div id="dbg-panel">
     <button id="dbg-toggle-btn">🔧 DEBUG</button>
     <div id="dbg-content" style="display:none">
+      <div id="dbg-target-selector">
+        <button class="dbg-target-btn" data-target="germoglio">🌱</button>
+        <button class="dbg-target-btn" data-target="vaso">🏺</button>
+        <button class="dbg-target-btn" data-target="calendario">📅</button>
+      </div>
       <div id="dbg-ctx-label">— nessun marker —</div>
       <div id="dbg-controls" style="display:none">
         <div class="dbg-section">Posizione</div>

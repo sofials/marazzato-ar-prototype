@@ -362,7 +362,8 @@ document.addEventListener("DOMContentLoaded", () => {
     present: defaultState({ px: -7.80, py:  0.45, pz: -1.45, rx: 70, s: 5.0 }),
     future:  defaultState({ px: -3.20, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
   };
-  const calendarioState = Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 });
+  const calDefault = () => Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 });
+  const calendarioStates = { past: calDefault(), present: calDefault(), future: calDefault() };
 
   try {
     const g = localStorage.getItem('germoglio-debug');
@@ -370,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const v = localStorage.getItem('vaso-debug');
     if (v) Object.assign(vasoStates, JSON.parse(v));
     const c = localStorage.getItem('calendario-debug');
-    if (c) Object.assign(calendarioState, JSON.parse(c));
+    if (c) Object.assign(calendarioStates, JSON.parse(c));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -381,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function currentState() {
     if (activeDbgTarget === 'germoglio') return germoglioState;
     if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
-    if (activeDbgTarget === 'calendario') return calendarioState;
+    if (activeDbgTarget === 'calendario') return calendarioStates[activeTimeline];
     return null;
   }
 
@@ -432,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
       planeDims.style.display = 'none';
       renderDisplay();
     } else if (activeDbgTarget === 'calendario') {
-      label.textContent       = '📅 CALENDARIO';
+      label.textContent       = `📅 CALENDARIO — ${timelineLabels[activeTimeline]}`;
       controls.style.display  = 'block';
       planeDims.style.display = 'block';
       renderDisplay();
@@ -444,13 +445,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Eventi dal sistema AR
   document.addEventListener('mm-target', e => {
-    activeDbgTarget = e.detail;
+    if (e.detail !== null) activeDbgTarget = e.detail;
     updateContext();
   });
 
   document.addEventListener('mm-timeline', e => {
     activeTimeline = e.detail;
-    if (activeDbgTarget === 'vaso') {
+    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario') {
       updateContext();
       applyToModel();
     }
@@ -487,7 +488,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('dbg-save-btn').addEventListener('click', () => {
     localStorage.setItem('germoglio-debug',  JSON.stringify(germoglioState));
     localStorage.setItem('vaso-debug',       JSON.stringify(vasoStates));
-    localStorage.setItem('calendario-debug', JSON.stringify(calendarioState));
+    localStorage.setItem('calendario-debug', JSON.stringify(calendarioStates));
 
     const fmt = (s) =>
       `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
@@ -504,7 +505,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ['past', 'present', 'future'].forEach(t => {
       text += `=== VASO ${timelineLabels[t]} ===\n${fmt(vasoStates[t])}\n\n`;
     });
-    text += `=== CALENDARIO ===\n${fmtPlane(calendarioState)}\n\n`;
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== CALENDARIO ${timelineLabels[t]} ===\n${fmtPlane(calendarioStates[t])}\n\n`;
+    });
 
     document.getElementById('dbg-modal-text').textContent = text.trim();
     document.getElementById('dbg-modal-overlay').classList.add('visible');
@@ -532,7 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   const calWrapper = document.getElementById('calendario-wrapper');
   if (calWrapper) {
-    const cs = calendarioState;
+    const cs = calendarioStates['present'];
     calWrapper.setAttribute('position', `${cs.px} ${cs.py} ${cs.pz}`);
     calWrapper.setAttribute('rotation', `${cs.rx} ${cs.ry} ${cs.rz}`);
     calWrapper.setAttribute('scale',    `${cs.s} ${cs.s} ${cs.s}`);
