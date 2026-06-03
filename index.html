@@ -27,31 +27,69 @@
 
   <!-- Schermata intro -->
   <div id="intro">
- <div class="intro-card">
-  <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
-  <h1>THREE TIMELINES</h1>
-  <p class="subtitle">Scopri le storie oltre la cenere</p>
+    <div class="intro-card">
+      <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
+      <h1>THREE TIMELINES</h1>
+      <p class="subtitle">Un'indagine sulla memoria</p>
 
-  <!-- Stato normale -->
-  <div id="intro-default">
-    <p class="instructions">Tappa <strong>INIZIA</strong> e inquadra i marker presenti in sala.</p>
-    <button id="start-btn">INIZIA</button>
+      <!-- Stato normale -->
+      <div id="intro-default">
+        <p class="instructions">Una famiglia ha lasciato tutto in questa sala.<br>I camion. Gli oggetti. Trent'anni di una storia che qualcuno deve ancora ricostruire.<br><br>Indaga i marker per portare in superficie le tre versioni di ciò che è accaduto.</p>
+        <button id="start-btn">INIZIA</button>
+        <button id="tutorial-open-btn">COME FUNZIONA</button>
+      </div>
+
+      <!-- Stato: permesso negato -->
+      <div id="intro-denied" style="display:none;">
+        <p class="instructions" style="color:#c93327;">
+          La fotocamera è bloccata.<br>Per continuare:
+        </p>
+        <ol class="permission-steps">
+          <li>Vai su <strong>Impostazioni</strong></li>
+          <li>Cerca <strong>Safari</strong></li>
+          <li>Tocca <strong>Fotocamera → Consenti</strong></li>
+          <li>Torna qui e ricarica la pagina</li>
+        </ol>
+        <button id="retry-btn">RIPROVA</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Stato: permesso negato -->
-  <div id="intro-denied" style="display:none;">
-    <p class="instructions" style="color:#c93327;">
-      La fotocamera è bloccata.<br>Per continuare:
-    </p>
-    <ol class="permission-steps">
-      <li>Vai su <strong>Impostazioni</strong></li>
-      <li>Cerca <strong>Safari</strong></li>
-      <li>Tocca <strong>Fotocamera → Consenti</strong></li>
-      <li>Torna qui e ricarica la pagina</li>
-    </ol>
-    <button id="retry-btn">RIPROVA</button>
-  </div>
-</div>
+  <!-- Pulsante ? fisso in alto a destra -->
+  <button id="help-btn" aria-label="Come funziona">?</button>
+
+  <!-- Overlay Tutorial -->
+  <div id="tutorial" class="hidden">
+    <div class="tutorial-card">
+      <button id="tutorial-close-btn" aria-label="Chiudi">✕</button>
+      <h2 class="tutorial-title">COME FUNZIONA</h2>
+      <p class="tutorial-intro">Sei entrato in un archivio. Questi sono gli strumenti dell'indagine.</p>
+      <div class="tutorial-steps">
+        <div class="tutorial-step">
+          <span class="tutorial-step-num">01</span>
+          <div>
+            <strong>INQUADRA</strong>
+            <p>Punta la fotocamera su un marker numerato in sala. L'oggetto si rivela.</p>
+          </div>
+        </div>
+        <div class="tutorial-step">
+          <span class="tutorial-step-num">02</span>
+          <div>
+            <strong>RUOTA LA GHIERA</strong>
+            <p>Passa tra PASSATO · PRESENTE · FUTURO per vedere come la storia è cambiata.</p>
+          </div>
+        </div>
+        <div class="tutorial-step">
+          <span class="tutorial-step-num">03</span>
+          <div>
+            <strong>LEGGI LE TRACCE</strong>
+            <p>Ogni strato rivela qualcosa di diverso. Nessuna risposta è definitiva.</p>
+          </div>
+        </div>
+      </div>
+      <p class="tutorial-note">I marker <strong>09 · 10 · 11</strong> sono i camion — mostrano una scheda storica invece della ghiera.</p>
+      <button id="tutorial-close-btn2">CHIUDI</button>
+    </div>
   </div>
   <!-- Hint quando cerca il marker -->
   <div id="scan-hint" class="hidden">INQUADRA IL MARKER</div>

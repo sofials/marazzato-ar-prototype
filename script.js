@@ -25,6 +25,16 @@ AFRAME.registerComponent('model-opacity', {
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById('start-btn');
   const intro = document.getElementById('intro');
+  const tutorialEl = document.getElementById('tutorial');
+  const helpBtn = document.getElementById('help-btn');
+
+  function openTutorial() { tutorialEl.classList.remove('hidden'); }
+  function closeTutorial() { tutorialEl.classList.add('hidden'); }
+
+  document.getElementById('tutorial-open-btn').addEventListener('click', openTutorial);
+  document.getElementById('tutorial-close-btn').addEventListener('click', closeTutorial);
+  document.getElementById('tutorial-close-btn2').addEventListener('click', closeTutorial);
+  helpBtn.addEventListener('click', openTutorial);
   const scanHint = document.getElementById('scan-hint');
   const dial = document.getElementById('timeline-dial');
   const dialSvg = document.getElementById('dial-svg');
@@ -387,11 +397,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function endDrag() {
     if (!isDragging) return;
     isDragging = false;
-    if (!isFading) {
-      const timeline = timelineFromAngle(currentAngle);
-      setNeedleAngle(angles[timeline], true);
-      applyTimeline(timeline);
-    }
+    const timeline = timelineFromAngle(currentAngle);
+    setNeedleAngle(angles[timeline], true);
+    if (!isFading) applyTimeline(timeline);
   }
 
   // Mouse
