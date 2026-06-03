@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const infoCamion1     = document.getElementById('info-card-camion1');
   const targetCamion2   = document.getElementById('ar-target-camion2');
   const infoCamion2     = document.getElementById('info-card-camion2');
+  const targetCamion3   = document.getElementById('ar-target-camion3');
+  const infoCamion3     = document.getElementById('info-card-camion3');
   const targetPiantina  = document.getElementById('ar-target-piantina');
   const plantModel = document.getElementById('plant-model');
 
@@ -187,6 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeTarget === 'camion1') {
         activeTarget = null;
         infoCamion1.classList.add('hidden');
+        infoCamion1.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
       }
     });
@@ -202,10 +205,34 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeTarget === 'camion2') {
         activeTarget = null;
         infoCamion2.classList.add('hidden');
+        infoCamion2.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
       }
     });
   }
+  if (targetCamion3 && infoCamion3) {
+    targetCamion3.addEventListener('targetFound', () => {
+      console.log('🚒 TARGET 10 (camion3) trovato');
+      activeTarget = 'camion3';
+      scanHint.classList.add('hidden');
+      infoCamion3.classList.remove('hidden');
+    });
+    targetCamion3.addEventListener('targetLost', () => {
+      if (activeTarget === 'camion3') {
+        activeTarget = null;
+        infoCamion3.classList.add('hidden');
+        infoCamion3.classList.remove('collapsed');
+        scanHint.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Toggle apertura/chiusura card info (generico per tutti i camion)
+  document.querySelectorAll('.info-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.info-card').classList.toggle('collapsed');
+    });
+  });
   if (targetPiantina) {
     targetPiantina.addEventListener('targetFound', () => {
       console.log('🌱 TARGET 2 (piantina) trovato');

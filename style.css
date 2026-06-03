@@ -310,6 +310,34 @@ body {
   border-left: 2px solid var(--mm-green);
   padding-left: 0.75rem;
 }
+.info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.info-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  color: var(--mm-dark);
+  opacity: 0.4;
+  font-size: 1.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.info-toggle-btn:active { opacity: 0.9; }
+.info-card.collapsed .info-toggle-btn { transform: rotate(180deg); opacity: 0.6; }
+.info-card-body {
+  margin-top: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+.info-card.collapsed .info-card-body { display: none; }
+.info-card.collapsed { padding-bottom: 1.2rem; }
 
 .permission-steps {
   text-align: left;
