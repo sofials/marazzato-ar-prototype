@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetCalendario = document.getElementById('ar-target-calendario');
   const targetCamion1   = document.getElementById('ar-target-camion1');
   const infoCamion1     = document.getElementById('info-card-camion1');
+  const targetCamion2   = document.getElementById('ar-target-camion2');
+  const infoCamion2     = document.getElementById('info-card-camion2');
   const targetPiantina  = document.getElementById('ar-target-piantina');
   const plantModel = document.getElementById('plant-model');
 
@@ -185,6 +187,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeTarget === 'camion1') {
         activeTarget = null;
         infoCamion1.classList.add('hidden');
+        scanHint.classList.remove('hidden');
+      }
+    });
+  }
+  if (targetCamion2 && infoCamion2) {
+    targetCamion2.addEventListener('targetFound', () => {
+      console.log('🚒 TARGET 9 (camion2) trovato');
+      activeTarget = 'camion2';
+      scanHint.classList.add('hidden');
+      infoCamion2.classList.remove('hidden');
+    });
+    targetCamion2.addEventListener('targetLost', () => {
+      if (activeTarget === 'camion2') {
+        activeTarget = null;
+        infoCamion2.classList.add('hidden');
         scanHint.classList.remove('hidden');
       }
     });
