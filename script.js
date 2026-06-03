@@ -362,8 +362,11 @@ document.addEventListener("DOMContentLoaded", () => {
     present: defaultState({ px: -7.80, py:  0.45, pz: -1.45, rx: 70, s: 5.0 }),
     future:  defaultState({ px: -3.20, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
   };
-  const calDefault = () => Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 });
-  const calendarioStates = { past: calDefault(), present: calDefault(), future: calDefault() };
+  const calendarioStates = {
+    past:    Object.assign(defaultState({ py: 0.60, s: 1.8 }), { w: 1.05, h: 1.55 }),
+    present: Object.assign(defaultState({ py: 0.60, s: 1.9 }), { w: 1.25, h: 1.70 }),
+    future:  Object.assign(defaultState({ py: 1.0,  s: 2.0 }), { w: 1.25, h: 1.40 }),
+  };
 
   try {
     const g = localStorage.getItem('germoglio-debug');
