@@ -70,7 +70,7 @@ with MindAR Image Compiler including ALL markers in the correct index order.
 - Toggle `visible` + `model-opacity` component for fade
 - `applyTimeline` branch: fade old model out → set visible false → set new visible true → fade in
 - Wrapper `#vase-wrapper` at `position="0 0 0" scale="1 1 1"` — all transforms on individual models
-- Calibrated values (from debug session): past `pos -4.10 -0.60 -0.35 rot 70 0 10 scale 3.8`, present `pos -7.10 -0.25 -1.45 rot 70 0 10 scale 5.0`, future `pos -3.15 -0.60 -0.35 rot 70 0 10 scale 3.8`
+- Calibrated values (from debug session): past `pos -4.10 -0.15 -0.35 rot 60 0 0 scale 3.8`, present `pos -7.80 0.45 -1.45 rot 70 0 0 scale 5.0`, future `pos -3.20 -0.15 -0.35 rot 60 0 0 scale 3.8`
 
 ### Pattern C — Factual card (info camion 1/2/3)
 - NO ghiera/dial — these cards show static archival content

@@ -36,11 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetPhoto = document.getElementById('ar-target-photo');
   const targetVase = document.getElementById('ar-target-vase');
   const targetDisegno = document.getElementById('ar-target-disegno');
+  const targetCalendario = document.getElementById('ar-target-calendario');
   const targetPiantina = document.getElementById('ar-target-piantina');
   const plantModel = document.getElementById('plant-model');
 
   const photoPlane = document.getElementById('photo-plane');
   const drawingPlane = document.getElementById('drawing-plane');
+  const calendarioPlane = document.getElementById('calendario-plane');
   
   const introDenied  = document.getElementById('intro-denied');
   const introDefault = document.getElementById('intro-default');
@@ -159,6 +161,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeTarget === 'disegno') { activeTarget = null; hideUI(); }
     });
   }
+  if (targetCalendario) {
+    targetCalendario.addEventListener('targetFound', () => {
+      console.log('🎯 TARGET 3 (calendario) trovato');
+      activeTarget = 'calendario';
+      showUI();
+    });
+    targetCalendario.addEventListener('targetLost', () => {
+      if (activeTarget === 'calendario') { activeTarget = null; hideUI(); }
+    });
+  }
   if (targetPiantina) {
     targetPiantina.addEventListener('targetFound', () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
@@ -239,6 +251,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         drawingPlane.setAttribute('src', `#tex-drawing-${timeline}`);
         animateFade(drawingPlane, false, fadeTime, () => { isFading = false; });
+      }, fadeTime);
+    } else if (activeTarget === 'calendario') {
+      animateFade(calendarioPlane, true, fadeTime);
+      setTimeout(() => {
+        calendarioPlane.setAttribute('src', `#tex-calendario-${timeline}`);
+        animateFade(calendarioPlane, false, fadeTime, () => { isFading = false; });
       }, fadeTime);
     } else if (activeTarget === 'vase') {
       const oldVase = vases[oldTimeline];
@@ -339,9 +357,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const germoglioState = defaultState({ rx: 90, s: 0.3 });
   const vasoStates = {
-    past:    defaultState({ px: -4.10, py: -0.60, pz: -0.35, rx: 70, rz: 10, s: 3.8 }),
-    present: defaultState({ px: -7.10, py: -0.25, pz: -1.45, rx: 70, rz: 10, s: 5.0 }),
-    future:  defaultState({ px: -3.15, py: -0.60, pz: -0.35, rx: 70, rz: 10, s: 3.8 }),
+    past:    defaultState({ px: -4.10, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
+    present: defaultState({ px: -7.80, py:  0.45, pz: -1.45, rx: 70, s: 5.0 }),
+    future:  defaultState({ px: -3.20, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
   };
 
   try {

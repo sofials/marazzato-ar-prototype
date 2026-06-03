@@ -103,6 +103,10 @@
       <img id="tex-drawing-present" src="textures/drawingpresent.jpg">
       <img id="tex-drawing-future" src="textures/drawingfuture.jpg">
 
+      <img id="tex-calendario-past" src="textures/calendario-past.jpg">
+      <img id="tex-calendario-present" src="textures/calendario-present.jpg">
+      <img id="tex-calendario-future" src="textures/calendario-future.jpg">
+
       <a-asset-item id="vaso-past-glb"    src="models/vaso-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
@@ -137,8 +141,11 @@
       </a-gltf-model>
     </a-entity>
 
-    <!-- Target 3: Calendario (placeholder) -->
+    <!-- Target 3: Calendario -->
     <a-entity mindar-image-target="targetIndex: 3" id="ar-target-calendario">
+      <a-entity id="calendario-wrapper" scale="2.5 2.5 2.5" position="0 1.0 0">
+        <a-plane id="calendario-plane" src="#tex-calendario-present" position="0 0 0" width="1.2" height="0.8" material="shader: flat; transparent: true; opacity: 1;"></a-plane>
+      </a-entity>
     </a-entity>
 
     <!-- Target 4: Disegno -->
