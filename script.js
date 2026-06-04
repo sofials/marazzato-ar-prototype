@@ -55,6 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const infoCamion3     = document.getElementById('info-card-camion3');
   const targetPiantina  = document.getElementById('ar-target-piantina');
   const plantModel = document.getElementById('plant-model');
+  const targetDiario = document.getElementById('ar-target-diario');
+  const diaryOverlay = document.getElementById('diary-overlay');
+  const diaries = {
+    past:    document.getElementById('diario-past-model'),
+    present: document.getElementById('diario-present-model'),
+    future:  document.getElementById('diario-future-model')
+  };
 
   const photoPlane = document.getElementById('photo-plane');
   const drawingPlane = document.getElementById('drawing-plane');
@@ -179,6 +186,19 @@ document.addEventListener("DOMContentLoaded", () => {
     scanHint.classList.remove('hidden');
   }
 
+  function openDiaryOverlay() {
+    if (currentTimeline === 'present') return;
+    document.getElementById('diary-content-past').classList.toggle('hidden', currentTimeline !== 'past');
+    document.getElementById('diary-content-future').classList.toggle('hidden', currentTimeline !== 'future');
+    diaryOverlay.classList.remove('hidden');
+  }
+
+  function closeDiaryOverlay() {
+    diaryOverlay.classList.add('hidden');
+  }
+
+  document.getElementById('diary-close-btn').addEventListener('click', closeDiaryOverlay);
+
   // === LISTENER TARGET CON TRACCIAMENTO ATTIVO ===
   if (targetPhoto) {
     targetPhoto.addEventListener('targetFound', () => {
@@ -277,6 +297,23 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.closest('.info-card').classList.toggle('collapsed');
     });
   });
+  if (targetDiario) {
+    targetDiario.addEventListener('targetFound', () => {
+      console.log('📓 TARGET 6 (diario) trovato');
+      activeTarget = 'diario';
+      showUI();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'diario' }));
+    });
+    targetDiario.addEventListener('targetLost', () => {
+      if (activeTarget === 'diario') {
+        activeTarget = null;
+        closeDiaryOverlay();
+        hideUI();
+        document.dispatchEvent(new CustomEvent('mm-target', { detail: null }));
+      }
+    });
+  }
+
   if (targetPiantina) {
     targetPiantina.addEventListener('targetFound', () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
@@ -378,6 +415,21 @@ document.addEventListener("DOMContentLoaded", () => {
           isFading = false;
         }
       }, fadeTime);
+    } else if (activeTarget === 'diario') {
+      if (!diaryOverlay.classList.contains('hidden')) closeDiaryOverlay();
+      const oldDiary = diaries[oldTimeline];
+      const newDiary = diaries[timeline];
+      animateFade(oldDiary, true, fadeTime);
+      setTimeout(() => {
+        if (oldDiary) oldDiary.setAttribute('visible', 'false');
+        if (newDiary) {
+          newDiary.setAttribute('visible', 'true');
+          setOpacity(newDiary, 0);
+          animateFade(newDiary, false, fadeTime, () => { isFading = false; });
+        } else {
+          isFading = false;
+        }
+      }, fadeTime);
     } else {
       // Nessun target attivo: aggiorna solo lo stato logico
       isFading = false;
@@ -446,6 +498,14 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('touchmove', (e) => { if (!isDragging) return; e.preventDefault(); moveDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
   window.addEventListener('touchend', endDrag);
 
+  // Tap su canvas AR per aprire overlay diario
+  sceneEl.addEventListener('touchstart', (e) => {
+    if (activeTarget !== 'diario') return;
+    if (!diaryOverlay.classList.contains('hidden')) return;
+    if (dial.contains(e.target)) return;
+    openDiaryOverlay();
+  }, { passive: true });
+
   // Tap diretto sulle tacche
   tickPast.addEventListener('click',    () => { if (!isFading) { setNeedleAngle(angles.past, true);    applyTimeline('past');    } });
   tickPresent.addEventListener('click', () => { if (!isFading) { setNeedleAngle(angles.present, true); applyTimeline('present'); } });
@@ -470,6 +530,11 @@ document.addEventListener("DOMContentLoaded", () => {
     present: Object.assign(defaultState({ py: 0.60, s: 1.9 }), { w: 1.25, h: 1.70 }),
     future:  Object.assign(defaultState({ py: 1.0,  s: 2.0 }), { w: 1.25, h: 1.40 }),
   };
+  const diarioStates = {
+    past:    defaultState(),
+    present: defaultState(),
+    future:  defaultState(),
+  };
 
   try {
     const g = localStorage.getItem('germoglio-debug');
@@ -478,6 +543,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (v) Object.assign(vasoStates, JSON.parse(v));
     const c = localStorage.getItem('calendario-debug');
     if (c) Object.assign(calendarioStates, JSON.parse(c));
+    const d = localStorage.getItem('diario-debug');
+    if (d) Object.assign(diarioStates, JSON.parse(d));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -489,6 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'germoglio') return germoglioState;
     if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
     if (activeDbgTarget === 'calendario') return calendarioStates[activeTimeline];
+    if (activeDbgTarget === 'diario')    return diarioStates[activeTimeline];
     return null;
   }
 
@@ -496,6 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'germoglio') return document.getElementById('plant-model');
     if (activeDbgTarget === 'vaso')      return document.getElementById(`vase-${activeTimeline}`);
     if (activeDbgTarget === 'calendario') return document.getElementById('calendario-wrapper');
+    if (activeDbgTarget === 'diario')    return document.getElementById(`diario-${activeTimeline}-model`);
     return null;
   }
 
@@ -543,6 +612,11 @@ document.addEventListener("DOMContentLoaded", () => {
       controls.style.display  = 'block';
       planeDims.style.display = 'block';
       renderDisplay();
+    } else if (activeDbgTarget === 'diario') {
+      label.textContent       = `📓 DIARIO — ${timelineLabels[activeTimeline]}`;
+      controls.style.display  = 'block';
+      planeDims.style.display = 'none';
+      renderDisplay();
     } else {
       label.textContent       = '— nessun marker —';
       controls.style.display  = 'none';
@@ -557,7 +631,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener('mm-timeline', e => {
     activeTimeline = e.detail;
-    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario') {
+    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario') {
       updateContext();
       applyToModel();
     }
@@ -595,6 +669,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('germoglio-debug',  JSON.stringify(germoglioState));
     localStorage.setItem('vaso-debug',       JSON.stringify(vasoStates));
     localStorage.setItem('calendario-debug', JSON.stringify(calendarioStates));
+    localStorage.setItem('diario-debug',     JSON.stringify(diarioStates));
 
     const fmt = (s) =>
       `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
@@ -613,6 +688,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     ['past', 'present', 'future'].forEach(t => {
       text += `=== CALENDARIO ${timelineLabels[t]} ===\n${fmtPlane(calendarioStates[t])}\n\n`;
+    });
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== DIARIO ${timelineLabels[t]} ===\n${fmt(diarioStates[t])}\n\n`;
     });
 
     document.getElementById('dbg-modal-text').textContent = text.trim();
@@ -651,6 +729,16 @@ document.addEventListener("DOMContentLoaded", () => {
       plane.setAttribute('height', cs.h);
     }
   }
+
+  ['past', 'present', 'future'].forEach(t => {
+    const model = document.getElementById(`diario-${t}-model`);
+    const s = diarioStates[t];
+    if (model) {
+      model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
+      model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
+      model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
+    }
+  });
 
   updateContext();
 })();

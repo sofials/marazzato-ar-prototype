@@ -29,8 +29,9 @@ MARAZZATO-AR-PROTOTYPE/
 ├── textures/
 │   ├── past.jpg / present.jpg / future.jpg           # Target 0 (photo)
 │   ├── drawingpast.jpg / drawingpresent.jpg / drawingfuture.jpg  # Target 4 (drawing)
-│   ├── calendario-past.jpg / calendario-present.jpg / calendario-future.jpg  # Target 3 (TODO)
-│   └── [future targets: postit, diario, libro]
+│   ├── calendario-past.png / calendario-present.png / calendario-future.png  # Target 3 ✅
+│   └── [diario-past/present/future.jpg — ❌ da produrre]
+│   └── [libro-past/present/future.jpg — ❌ da produrre]
 ├── index.html
 ├── script.js
 └── style.css
@@ -42,18 +43,19 @@ MARAZZATO-AR-PROTOTYPE/
 | 0           | 01 FOTO      | ar-target-photo      | A       | ✅ working    |
 | 1           | 02 VASO      | ar-target-vase       | B (GLB) | ✅ working — calibrated per-GLB pos/rot/scale |
 | 2           | 03 PIANTINA  | ar-target-piantina   | D (anim)| ✅ working — germoglio.glb, rot 90 0 0, scale 0.3 |
-| 3           | 04 CALENDARIO| ar-target-calendario | A       | ✅ codice pronto — textures da produrre (calendario-past/present/future.jpg) |
+| 3           | 04 CALENDARIO| ar-target-calendario | A       | ✅ working — textures .png prodotte |
 | 4           | 05 DISEGNO   | ar-target-disegno    | A       | ✅ working    |
-| 5           | 06 POST-IT   | ar-target-postit     | A       | ❌ not yet    |
-| 6           | 07 DIARIO    | ar-target-diario     | A       | ❌ not yet    |
-| 7           | 08 LIBRO     | ar-target-libro      | A       | ❌ not yet    |
-| 8           | INFO CAMION 1| ar-target-camion1    | C       | ❌ not yet    |
-| 9           | INFO CAMION 2| ar-target-camion2    | C       | ❌ not yet    |
-| 10          | INFO CAMION 3| ar-target-camion3    | C       | ❌ not yet    |
+| 5           | 06 POST-IT   | ar-target-postit     | A       | ⚠️ in sospeso — da decidere se implementare |
+| 6           | 07 DIARIO    | ar-target-diario     | B (GLB) | ❌ da fare — 1 GLB (2 materiali: Cover+Pages) + 6 JPG texture (2×3 timeline) |
+| 7           | 08 LIBRO     | ar-target-libro      | A       | ❌ da fare — textures mancanti (tutte e 3) |
+| 8           | INFO CAMION 1| ar-target-camion1    | C       | ✅ working — card statica HTML |
+| 9           | INFO CAMION 2| ar-target-camion2    | C       | ✅ working — card statica HTML |
+| 10          | INFO CAMION 3| ar-target-camion3    | C       | ✅ working — card statica HTML |
 | 11          | GERMOGLIO    | ar-target-germoglio  | D (hero)| ❌ not yet    |
 
-**IMPORTANT**: whenever a target is added, `assets/targets.mind` must be recompiled
-with MindAR Image Compiler including ALL markers in the correct index order.
+**IMPORTANT**: `assets/targets.mind` è già compilato con tutti e 12 i marker (indici 0–11).
+Per diario/libro/germoglio NON serve ricompilare — i marker sono già presenti nell'ordine corretto.
+Ricompilare solo se si aggiunge un nuovo marker fisico che non era incluso.
 
 ## Implementation patterns
 
@@ -101,8 +103,9 @@ function applyTimeline(timeline) {
   if (activeTarget === 'photo') { /* texture swap */ }
   else if (activeTarget === 'disegno') { /* texture swap */ }
   else if (activeTarget === 'vase') { /* GLB swap */ }
-  else if (activeTarget === 'calendario') { /* ADD: texture swap */ }
-  // ... add more branches here ...
+  else if (activeTarget === 'calendario') { /* texture swap — già implementato */ }
+  // else if (activeTarget === 'diario') { /* da aggiungere — Pattern A + E */ }
+  // else if (activeTarget === 'libro') { /* da aggiungere — Pattern A */ }
   else { isFading = false; }
 }
 ```
@@ -110,7 +113,7 @@ function applyTimeline(timeline) {
 ## Brand / design constraints
 - **Palette**: `--mm-cream: #f4f1eb`, `--mm-dark: #333333`, `--mm-red: #c93327`, `--mm-green: #bacd9c`
 - **Font**: Barlow Condensed 600/700 only
-- **No tap/dwell interaction** — the ONLY interaction is the rotary ghiera (drag or tap on tick marks)
+- **No tap/dwell interaction** — the ONLY interaction is the rotary ghiera (drag or tap on tick marks) + tap sul diario per entrare in modalità lettura
 - **No gamification** — the experience must feel contemplative, not game-like
 - Physical experience must work WITHOUT AR; digital layers enrich but don't replace
 
@@ -131,4 +134,4 @@ All other targets must keep it hidden.
 4. Declare `const targetX` and `const xPlane` variables in DOMContentLoaded
 5. Add `if (targetX)` listener block (targetFound / targetLost)
 6. Add `else if (activeTarget === '<name>')` branch in `applyTimeline`
-7. Recompile `assets/targets.mind` with the new marker at index N
+7. **NON ricompilare** `assets/targets.mind` — i marker di diario (6) e libro (7) sono già inclusi
