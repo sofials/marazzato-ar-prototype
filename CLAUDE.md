@@ -46,7 +46,7 @@ MARAZZATO-AR-PROTOTYPE/
 | 3           | 04 CALENDARIO| ar-target-calendario | A       | ✅ working — textures .png prodotte |
 | 4           | 05 DISEGNO   | ar-target-disegno    | A       | ✅ working    |
 | 5           | 06 POST-IT   | ar-target-postit     | A       | ⚠️ in sospeso — da decidere se implementare |
-| 6           | 07 DIARIO    | ar-target-diario     | B (GLB) | ❌ da fare — 1 GLB (2 materiali: Cover+Pages) + 6 JPG texture (2×3 timeline) |
+| 6           | 07 DIARIO    | ar-target-diario     | B (GLB) | 🔁 TODO: rifare mesh e texture — CTRL+A Apply All Transforms in Blender prima di esportare |
 | 7           | 08 LIBRO     | ar-target-libro      | A       | ❌ da fare — textures mancanti (tutte e 3) |
 | 8           | INFO CAMION 1| ar-target-camion1    | C       | ✅ working — card statica HTML |
 | 9           | INFO CAMION 2| ar-target-camion2    | C       | ✅ working — card statica HTML |
