@@ -58,9 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetDiario = document.getElementById('ar-target-diario');
   const diaryOverlay = document.getElementById('diary-overlay');
   const diaries = {
-    past:    document.getElementById('diario-past-model'),
-    present: document.getElementById('diario-present-model'),
-    future:  document.getElementById('diario-future-model')
+    past:    [document.getElementById('diario-past-model-a'),   document.getElementById('diario-past-model-b')],
+    present: [document.getElementById('diario-present-model')],
+    future:  [document.getElementById('diario-future-model-a'), document.getElementById('diario-future-model-b')],
   };
 
   const photoPlane = document.getElementById('photo-plane');
@@ -391,9 +391,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (vases[tl]) setOpacity(vases[tl], 1);
     } else if (activeTarget === 'diario') {
       ['past', 'present', 'future'].forEach(t => {
-        if (diaries[t]) diaries[t].setAttribute('visible', t === tl ? 'true' : 'false');
+        diaries[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
       });
-      if (diaries[tl]) setOpacity(diaries[tl], 1);
+      diaries[tl].forEach(m => { if (m) setOpacity(m, 1); });
     }
   }
 
@@ -455,18 +455,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }, fadeTime);
     } else if (activeTarget === 'diario') {
       if (!diaryOverlay.classList.contains('hidden')) closeDiaryOverlay();
-      const oldDiary = diaries[oldTimeline];
-      const newDiary = diaries[timeline];
-      animateFade(oldDiary, true, fadeTime);
+      const oldPieces = diaries[oldTimeline];
+      const newPieces = diaries[timeline];
+      oldPieces.forEach(m => animateFade(m, true, fadeTime));
       setTimeout(() => {
-        if (oldDiary) oldDiary.setAttribute('visible', 'false');
-        if (newDiary) {
-          newDiary.setAttribute('visible', 'true');
-          setOpacity(newDiary, 0);
-          animateFade(newDiary, false, fadeTime, () => { isFading = false; });
-        } else {
-          isFading = false;
-        }
+        oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
+        const last = newPieces[newPieces.length - 1];
+        newPieces.forEach(m => {
+          if (!m) return;
+          m.setAttribute('visible', 'true');
+          setOpacity(m, 0);
+          animateFade(m, false, fadeTime, m === last ? () => { isFading = false; } : null);
+        });
+        if (!last) isFading = false;
       }, fadeTime);
     } else {
       // Nessun target attivo: aggiorna solo lo stato logico
@@ -602,17 +603,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'germoglio') return document.getElementById('plant-model');
     if (activeDbgTarget === 'vaso')      return document.getElementById(`vase-${activeTimeline}`);
     if (activeDbgTarget === 'calendario') return document.getElementById('calendario-wrapper');
-    if (activeDbgTarget === 'diario')    return document.getElementById(`diario-${activeTimeline}-model`);
+    if (activeDbgTarget === 'diario') {
+      const ids = activeTimeline === 'present'
+        ? [`diario-present-model`]
+        : [`diario-${activeTimeline}-model-a`, `diario-${activeTimeline}-model-b`];
+      return ids.map(id => document.getElementById(id)).filter(Boolean);
+    }
     return null;
   }
 
   function applyToModel() {
     const state = currentState();
-    const model = currentModel();
-    if (!state || !model) return;
-    model.setAttribute('position', `${state.px} ${state.py} ${state.pz}`);
-    model.setAttribute('rotation', `${state.rx} ${state.ry} ${state.rz}`);
-    model.setAttribute('scale',    `${state.s} ${state.s} ${state.s}`);
+    const models = currentModel();
+    if (!state || !models) return;
+    const list = Array.isArray(models) ? models : [models];
+    list.forEach(model => {
+      model.setAttribute('position', `${state.px} ${state.py} ${state.pz}`);
+      model.setAttribute('rotation', `${state.rx} ${state.ry} ${state.rz}`);
+      model.setAttribute('scale',    `${state.s} ${state.s} ${state.s}`);
+    });
     if (activeDbgTarget === 'calendario') {
       const plane = document.getElementById('calendario-plane');
       if (plane) {
@@ -769,13 +778,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   ['past', 'present', 'future'].forEach(t => {
-    const model = document.getElementById(`diario-${t}-model`);
+    const ids = t === 'present'
+      ? [`diario-present-model`]
+      : [`diario-${t}-model-a`, `diario-${t}-model-b`];
     const s = diarioStates[t];
-    if (model) {
-      model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
-      model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
-      model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
-    }
+    ids.forEach(id => {
+      const model = document.getElementById(id);
+      if (model) {
+        model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
+        model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
+        model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
+      }
+    });
   });
 
   updateContext();

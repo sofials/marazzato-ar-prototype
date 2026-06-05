@@ -234,9 +234,11 @@
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="plant-glb"        src="models/germoglio.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-past-glb"    src="models/diario-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-present-glb" src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-future-glb"  src="models/diario-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-cover-past-glb"   src="models/cover-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-pages-past-glb"   src="models/pages-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-present-glb"      src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-cover-future-glb" src="models/cover-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-pages-future-glb" src="models/pages-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -283,12 +285,14 @@
     <!-- Target 10: Info Camion 3 (Pattern C) -->
     <a-entity mindar-image-target="targetIndex: 10" id="ar-target-camion3"></a-entity>
 
-    <!-- Target 6: Diario (Pattern B — GLB swap) -->
+    <!-- Target 6: Diario (Pattern B — GLB swap; past e future hanno due pezzi ciascuno) -->
     <a-entity mindar-image-target="targetIndex: 6" id="ar-target-diario">
       <a-entity id="diario-wrapper" position="0 0 0" scale="1 1 1">
-        <a-gltf-model id="diario-past-model"    src="#diario-past-glb"    position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
-        <a-gltf-model id="diario-present-model" src="#diario-present-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
-        <a-gltf-model id="diario-future-model"  src="#diario-future-glb"  position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-past-model-a"   src="#diario-cover-past-glb"   position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-past-model-b"   src="#diario-pages-past-glb"   position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-present-model"  src="#diario-present-glb"      position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
+        <a-gltf-model id="diario-future-model-a" src="#diario-cover-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-future-model-b" src="#diario-pages-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
     </a-entity>
 
@@ -306,7 +310,7 @@
     <div class="diary-card">
       <button id="diary-close-btn" aria-label="Chiudi">✕</button>
       <div id="diary-content-past" class="diary-content">
-        <div class="diary-date">Due giorni prima del fuoco</div>
+        <div class="diary-date">Settembre 1950</div>
         <blockquote class="diary-quote">«Oggi al lavoro tutto come sempre. A casa Carlo mi ha letto due pagine del suo libro. Quello dei mestieri. Vuole fare il pompiere. Per ora.»</blockquote>
       </div>
       <div id="diary-content-future" class="diary-content hidden">
