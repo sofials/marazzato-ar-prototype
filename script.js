@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const targetDiario = document.getElementById('ar-target-diario');
   const diaryOverlay = document.getElementById('diary-overlay');
   const diaries = {
-    past:    [document.getElementById('diario-past-model-a'),   document.getElementById('diario-past-model-b')],
+    past:    [document.getElementById('diario-past-model')],
     present: [document.getElementById('diario-present-model')],
     future:  [document.getElementById('diario-future-model-a'), document.getElementById('diario-future-model-b')],
   };
@@ -606,7 +606,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'diario') {
       const ids = activeTimeline === 'present'
         ? [`diario-present-model`]
-        : [`diario-${activeTimeline}-model-a`, `diario-${activeTimeline}-model-b`];
+        : activeTimeline === 'past'
+          ? [`diario-past-model`]
+          : [`diario-future-model-a`, `diario-future-model-b`];
       return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     return null;
@@ -780,7 +782,9 @@ document.addEventListener("DOMContentLoaded", () => {
   ['past', 'present', 'future'].forEach(t => {
     const ids = t === 'present'
       ? [`diario-present-model`]
-      : [`diario-${t}-model-a`, `diario-${t}-model-b`];
+      : t === 'past'
+        ? [`diario-past-model`]
+        : [`diario-future-model-a`, `diario-future-model-b`];
     const s = diarioStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);
