@@ -234,10 +234,9 @@
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="plant-glb"        src="models/germoglio.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-past-glb"          src="models/provadiariopast.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-past-glb"          src="models/diario-past.glb"     response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-present-glb"      src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-cover-future-glb" src="models/cover-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="diario-pages-future-glb" src="models/pages-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-future-glb"        src="models/diario-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -289,8 +288,7 @@
       <a-entity id="diario-wrapper" position="0 0 0" scale="1 1 1">
         <a-gltf-model id="diario-past-model"      src="#diario-past-glb"          position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="diario-present-model"  src="#diario-present-glb"      position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
-        <a-gltf-model id="diario-future-model-a" src="#diario-cover-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
-        <a-gltf-model id="diario-future-model-b" src="#diario-pages-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-future-model"   src="#diario-future-glb"        position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
     </a-entity>
 

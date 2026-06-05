@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const diaries = {
     past:    [document.getElementById('diario-past-model')],
     present: [document.getElementById('diario-present-model')],
-    future:  [document.getElementById('diario-future-model-a'), document.getElementById('diario-future-model-b')],
+    future:  [document.getElementById('diario-future-model')],
   };
 
   const photoPlane = document.getElementById('photo-plane');
@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? [`diario-present-model`]
         : activeTimeline === 'past'
           ? [`diario-past-model`]
-          : [`diario-future-model-a`, `diario-future-model-b`];
+          : [`diario-future-model`];
       return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     return null;
@@ -784,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? [`diario-present-model`]
       : t === 'past'
         ? [`diario-past-model`]
-        : [`diario-future-model-a`, `diario-future-model-b`];
+        : [`diario-future-model`];
     const s = diarioStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);
