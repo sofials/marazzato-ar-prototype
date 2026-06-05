@@ -237,6 +237,10 @@
       <a-asset-item id="diario-past-glb"          src="models/diario-past.glb"     response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-present-glb"      src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-future-glb"        src="models/diario_future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="libro-past-glb"           src="models/libro-past.glb"     response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="libro-present-glb"        src="models/libro-present.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="libro-future-glb"         src="models/libro-future.glb"   response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="ticket-future-glb"        src="models/ticket-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -289,6 +293,16 @@
         <a-gltf-model id="diario-past-model"      src="#diario-past-glb"          position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="diario-present-model"  src="#diario-present-glb"      position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
         <a-gltf-model id="diario-future-model"   src="#diario-future-glb"        position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+      </a-entity>
+    </a-entity>
+
+    <!-- Target 7: Libro (Pattern B — GLB swap; future ha due pezzi) -->
+    <a-entity mindar-image-target="targetIndex: 7" id="ar-target-libro">
+      <a-entity id="libro-wrapper" position="0 0 0" scale="1 1 1">
+        <a-gltf-model id="libro-past-model"     src="#libro-past-glb"    position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="libro-present-model"  src="#libro-present-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
+        <a-gltf-model id="libro-future-model-a" src="#libro-future-glb"  position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="libro-future-model-b" src="#ticket-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
     </a-entity>
 
@@ -348,6 +362,7 @@
         <button class="dbg-target-btn" data-target="vaso">🏺</button>
         <button class="dbg-target-btn" data-target="calendario">📅</button>
         <button class="dbg-target-btn" data-target="diario">📓</button>
+        <button class="dbg-target-btn" data-target="libro">📚</button>
       </div>
       <div id="dbg-ctx-label">— nessun marker —</div>
       <div id="dbg-controls" style="display:none">

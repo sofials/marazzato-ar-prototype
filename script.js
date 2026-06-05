@@ -63,6 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
     future:  [document.getElementById('diario-future-model')],
   };
 
+  const targetLibro = document.getElementById('ar-target-libro');
+  const libros = {
+    past:    [document.getElementById('libro-past-model')],
+    present: [document.getElementById('libro-present-model')],
+    future:  [document.getElementById('libro-future-model-a'), document.getElementById('libro-future-model-b')],
+  };
+
   const photoPlane = document.getElementById('photo-plane');
   const drawingPlane = document.getElementById('drawing-plane');
   const calendarioPlane = document.getElementById('calendario-plane');
@@ -319,6 +326,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (targetLibro) {
+    targetLibro.addEventListener('targetFound', () => {
+      console.log('📚 TARGET 7 (libro) trovato');
+      activeTarget = 'libro';
+      showUI();
+      syncActiveTarget();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'libro' }));
+    });
+    targetLibro.addEventListener('targetLost', () => {
+      if (activeTarget === 'libro') {
+        activeTarget = null;
+        hideUI();
+        document.dispatchEvent(new CustomEvent('mm-target', { detail: null }));
+      }
+    });
+  }
+
   if (targetPiantina) {
     targetPiantina.addEventListener('targetFound', () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
@@ -394,6 +418,11 @@ document.addEventListener("DOMContentLoaded", () => {
         diaries[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
       });
       diaries[tl].forEach(m => { if (m) setOpacity(m, 1); });
+    } else if (activeTarget === 'libro') {
+      ['past', 'present', 'future'].forEach(t => {
+        libros[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
+      });
+      libros[tl].forEach(m => { if (m) setOpacity(m, 1); });
     }
   }
 
@@ -457,6 +486,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!diaryOverlay.classList.contains('hidden')) closeDiaryOverlay();
       const oldPieces = diaries[oldTimeline];
       const newPieces = diaries[timeline];
+      oldPieces.forEach(m => animateFade(m, true, fadeTime));
+      setTimeout(() => {
+        oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
+        const last = newPieces[newPieces.length - 1];
+        newPieces.forEach(m => {
+          if (!m) return;
+          m.setAttribute('visible', 'true');
+          setOpacity(m, 0);
+          animateFade(m, false, fadeTime, m === last ? () => { isFading = false; } : null);
+        });
+        if (!last) isFading = false;
+      }, fadeTime);
+    } else if (activeTarget === 'libro') {
+      const oldPieces = libros[oldTimeline];
+      const newPieces = libros[timeline];
       oldPieces.forEach(m => animateFade(m, true, fadeTime));
       setTimeout(() => {
         oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
@@ -574,6 +618,11 @@ document.addEventListener("DOMContentLoaded", () => {
     present: defaultState(),
     future:  defaultState(),
   };
+  const libroStates = {
+    past:    defaultState(),
+    present: defaultState(),
+    future:  defaultState(),
+  };
 
   try {
     const g = localStorage.getItem('germoglio-debug');
@@ -584,6 +633,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (c) Object.assign(calendarioStates, JSON.parse(c));
     const d = localStorage.getItem('diario-debug');
     if (d) Object.assign(diarioStates, JSON.parse(d));
+    const l = localStorage.getItem('libro-debug');
+    if (l) Object.assign(libroStates, JSON.parse(l));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -596,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
     if (activeDbgTarget === 'calendario') return calendarioStates[activeTimeline];
     if (activeDbgTarget === 'diario')    return diarioStates[activeTimeline];
+    if (activeDbgTarget === 'libro')     return libroStates[activeTimeline];
     return null;
   }
 
@@ -609,6 +661,12 @@ document.addEventListener("DOMContentLoaded", () => {
         : activeTimeline === 'past'
           ? [`diario-past-model`]
           : [`diario-future-model`];
+      return ids.map(id => document.getElementById(id)).filter(Boolean);
+    }
+    if (activeDbgTarget === 'libro') {
+      const ids = activeTimeline === 'future'
+        ? [`libro-future-model-a`, `libro-future-model-b`]
+        : [`libro-${activeTimeline}-model`];
       return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     return null;
@@ -666,6 +724,11 @@ document.addEventListener("DOMContentLoaded", () => {
       controls.style.display  = 'block';
       planeDims.style.display = 'none';
       renderDisplay();
+    } else if (activeDbgTarget === 'libro') {
+      label.textContent       = `📚 LIBRO — ${timelineLabels[activeTimeline]}`;
+      controls.style.display  = 'block';
+      planeDims.style.display = 'none';
+      renderDisplay();
     } else {
       label.textContent       = '— nessun marker —';
       controls.style.display  = 'none';
@@ -680,7 +743,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener('mm-timeline', e => {
     activeTimeline = e.detail;
-    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario') {
+    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario' || activeDbgTarget === 'libro') {
       updateContext();
       applyToModel();
     }
@@ -719,6 +782,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('vaso-debug',       JSON.stringify(vasoStates));
     localStorage.setItem('calendario-debug', JSON.stringify(calendarioStates));
     localStorage.setItem('diario-debug',     JSON.stringify(diarioStates));
+    localStorage.setItem('libro-debug',      JSON.stringify(libroStates));
 
     const fmt = (s) =>
       `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
@@ -740,6 +804,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     ['past', 'present', 'future'].forEach(t => {
       text += `=== DIARIO ${timelineLabels[t]} ===\n${fmt(diarioStates[t])}\n\n`;
+    });
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== LIBRO ${timelineLabels[t]} ===\n${fmt(libroStates[t])}\n\n`;
     });
 
     document.getElementById('dbg-modal-text').textContent = text.trim();
@@ -786,6 +853,21 @@ document.addEventListener("DOMContentLoaded", () => {
         ? [`diario-past-model`]
         : [`diario-future-model`];
     const s = diarioStates[t];
+    ids.forEach(id => {
+      const model = document.getElementById(id);
+      if (model) {
+        model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
+        model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
+        model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
+      }
+    });
+  });
+
+  ['past', 'present', 'future'].forEach(t => {
+    const ids = t === 'future'
+      ? [`libro-future-model-a`, `libro-future-model-b`]
+      : [`libro-${t}-model`];
+    const s = libroStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);
       if (model) {
