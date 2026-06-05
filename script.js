@@ -205,6 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 0 (photo) trovato');
       activeTarget = 'photo';
       showUI();
+      syncActiveTarget();
     });
     targetPhoto.addEventListener('targetLost', () => {
       if (activeTarget === 'photo') { activeTarget = null; hideUI(); }
@@ -215,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 1 (vase) trovato');
       activeTarget = 'vase';
       showUI();
+      syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'vaso' }));
     });
     targetVase.addEventListener('targetLost', () => {
@@ -226,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 4 (disegno) trovato');
       activeTarget = 'disegno';
       showUI();
+      syncActiveTarget();
     });
     targetDisegno.addEventListener('targetLost', () => {
       if (activeTarget === 'disegno') { activeTarget = null; hideUI(); }
@@ -236,6 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 3 (calendario) trovato');
       activeTarget = 'calendario';
       showUI();
+      syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'calendario' }));
     });
     targetCalendario.addEventListener('targetLost', () => {
@@ -302,6 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('📓 TARGET 6 (diario) trovato');
       activeTarget = 'diario';
       showUI();
+      syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'diario' }));
     });
     targetDiario.addEventListener('targetLost', () => {
@@ -357,6 +362,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     requestAnimationFrame(step);
+  }
+
+  // Sincronizza l'oggetto appena trovato allo stato corrente della ghiera (senza fade)
+  function syncActiveTarget() {
+    const tl = currentTimeline;
+    // Aggiorna UI ghiera
+    dialLabel.textContent = labels[tl];
+    tickPast.classList.toggle('active',    tl === 'past');
+    tickPresent.classList.toggle('active', tl === 'present');
+    tickFuture.classList.toggle('active',  tl === 'future');
+
+    if (activeTarget === 'photo') {
+      photoPlane.setAttribute('src', `#tex-${tl}`);
+      setOpacity(photoPlane, 1);
+      if (tl === 'past') photoCaption.classList.remove('hidden');
+      else photoCaption.classList.add('hidden');
+    } else if (activeTarget === 'disegno') {
+      drawingPlane.setAttribute('src', `#tex-drawing-${tl}`);
+      setOpacity(drawingPlane, 1);
+    } else if (activeTarget === 'calendario') {
+      calendarioPlane.setAttribute('src', `#tex-calendario-${tl}`);
+      setOpacity(calendarioPlane, 1);
+    } else if (activeTarget === 'vase') {
+      ['past', 'present', 'future'].forEach(t => {
+        if (vases[t]) vases[t].setAttribute('visible', t === tl ? 'true' : 'false');
+      });
+      if (vases[tl]) setOpacity(vases[tl], 1);
+    } else if (activeTarget === 'diario') {
+      ['past', 'present', 'future'].forEach(t => {
+        if (diaries[t]) diaries[t].setAttribute('visible', t === tl ? 'true' : 'false');
+      });
+      if (diaries[tl]) setOpacity(diaries[tl], 1);
+    }
   }
 
   // === LOGICA TIMELINE (agisce solo sul target attivo) ===
