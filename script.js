@@ -26,7 +26,7 @@ AFRAME.registerComponent('model-opacity', {
 const strings = {
   it: {
     subtitle:        "Un'indagine sulla memoria",
-    intro_text:      "Una famiglia ha lasciato tutto in questa sala.<br>I camion. Gli oggetti. Trent'anni di una storia che qualcuno deve ancora ricostruire.<br><br>Indaga i marker per portare in superficie le tre versioni di ciò che è accaduto.",
+    intro_text:      "Gli oggetti di una famiglia sono rimasti qui dopo un incendio.<br>Punta il telefono sui marker in sala: ogni oggetto rivela tre versioni della stessa storia.",
     start:           "INIZIA",
     how_it_works:    "COME FUNZIONA",
     retry:           "RIPROVA",
@@ -82,7 +82,7 @@ const strings = {
   },
   en: {
     subtitle:        "An investigation into memory",
-    intro_text:      "A family left everything in this room.<br>The trucks. The objects. Thirty years of a story that someone still needs to piece together.<br><br>Explore the markers to uncover the three versions of what happened.",
+    intro_text:      "A family's belongings remained here after a fire.<br>Point your phone at the markers in the room: each object reveals three versions of the same story.",
     start:           "START",
     how_it_works:    "HOW IT WORKS",
     retry:           "TRY AGAIN",
