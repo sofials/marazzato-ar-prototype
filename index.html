@@ -237,9 +237,7 @@
       <a-asset-item id="diario-past-glb"          src="models/diario-past.glb"     response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-present-glb"      src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-future-glb"        src="models/diario_future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="page-past-glb"             src="models/page-past.glb"      response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="rubrica-past-glb"          src="models/rubrica-past.glb"   response-type="arraybuffer" timeout="0"></a-asset-item>
-      <a-asset-item id="page-present-glb"          src="models/page-present.glb"   response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="rubrica-past-glb"          src="models/rubrica-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="rubrica-present-glb"       src="models/rubrica-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="rubrica-future-glb"        src="models/rubrica-future.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="post-it-glb"               src="models/post-it.glb"        response-type="arraybuffer" timeout="0"></a-asset-item>
@@ -258,7 +256,7 @@
     <a-entity mindar-image-target="targetIndex: 1" id="ar-target-vase">
       <a-entity id="vase-wrapper" position="0 0 0" scale="1 1 1">
         <a-gltf-model id="vase-past"    src="#vaso-past-glb"    position="-4.10 -0.60 -0.35" rotation="70 0 10" scale="3.8 3.8 3.8" visible="false" model-opacity="opacity: 0"></a-gltf-model>
-        <a-gltf-model id="vase-present" src="#vaso-present-glb" position="-7.10 -0.25 -1.45" rotation="70 0 10" scale="5.0 5.0 5.0" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
+        <a-gltf-model id="vase-present" src="#vaso-present-glb" position="-7.45 0.15 -1.45" rotation="70 0 0" scale="5.0 5.0 5.0" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
         <a-gltf-model id="vase-future"  src="#vaso-future-glb"  position="-3.15 -0.60 -0.35" rotation="70 0 10" scale="3.8 3.8 3.8" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
     </a-entity>
@@ -305,10 +303,8 @@
     <!-- Target 5: Post-it / Rubrica (Pattern B — GLB swap, un pezzo per timeline) -->
     <a-entity mindar-image-target="targetIndex: 5" id="ar-target-postit">
       <a-entity id="postit-wrapper" position="0 0 0" scale="1 1 1">
-        <a-gltf-model id="postit-past-model-a"    src="#page-past-glb"       position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
-        <a-gltf-model id="postit-past-model-b"    src="#rubrica-past-glb"    position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
-        <a-gltf-model id="postit-present-model-a" src="#page-present-glb"    position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
-        <a-gltf-model id="postit-present-model-b" src="#rubrica-present-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
+        <a-gltf-model id="postit-past-model"    src="#rubrica-past-glb"    position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="postit-present-model" src="#rubrica-present-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
         <a-gltf-model id="postit-future-model-a" src="#rubrica-future-glb" position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="postit-future-model-b" src="#post-it-glb"        position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>

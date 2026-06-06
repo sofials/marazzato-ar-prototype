@@ -65,9 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const targetPostit = document.getElementById('ar-target-postit');
   const postits = {
-    past:    [document.getElementById('postit-past-model-a'),    document.getElementById('postit-past-model-b')],
-    present: [document.getElementById('postit-present-model-a'), document.getElementById('postit-present-model-b')],
-    future:  [document.getElementById('postit-future-model-a'),  document.getElementById('postit-future-model-b')],
+    past:    [document.getElementById('postit-past-model')],
+    present: [document.getElementById('postit-present-model')],
+    future:  [document.getElementById('postit-future-model-a'), document.getElementById('postit-future-model-b')],
   };
 
   const targetLibro = document.getElementById('ar-target-libro');
@@ -649,7 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const germoglioState = defaultState({ rx: 90, s: 0.3 });
   const vasoStates = {
     past:    defaultState({ px: -4.10, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
-    present: defaultState({ px: -7.80, py:  0.45, pz: -1.45, rx: 70, s: 5.0 }),
+    present: defaultState({ px: -7.45, py:  0.15, pz: -1.45, rx: 70, s: 5.0 }),
     future:  defaultState({ px: -3.20, py: -0.15, pz: -0.35, rx: 60, s: 3.8 }),
   };
   const calendarioStates = {
@@ -722,8 +722,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     if (activeDbgTarget === 'postit') {
-      return [`postit-${activeTimeline}-model-a`, `postit-${activeTimeline}-model-b`]
-        .map(id => document.getElementById(id)).filter(Boolean);
+      const ids = activeTimeline === 'future'
+        ? [`postit-future-model-a`, `postit-future-model-b`]
+        : [`postit-${activeTimeline}-model`];
+      return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     return null;
   }
@@ -944,7 +946,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   ['past', 'present', 'future'].forEach(t => {
-    const ids = [`postit-${t}-model-a`, `postit-${t}-model-b`];
+    const ids = t === 'future'
+      ? [`postit-future-model-a`, `postit-future-model-b`]
+      : [`postit-${t}-model`];
     const s = postitStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);
