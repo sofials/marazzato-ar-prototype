@@ -902,7 +902,8 @@ document.addEventListener("DOMContentLoaded", () => {
   tickFuture.addEventListener('click',  () => { if (!isFading) { setNeedleAngle(angles.future, true);  applyTimeline('future');  } });
 });
 
-// === DEBUG PANEL (rimuovere in produzione) ===
+// === DEBUG PANEL — commentato, decommentare per usare ===
+/* DEBUG_START
 (function () {
   const steps    = { px: 0.05, py: 0.05, pz: 0.05, rx: 5, ry: 5, rz: 5, s: 0.1, w: 0.05, h: 0.05 };
   const decimals = { px: 2,    py: 2,    pz: 2,    rx: 0, ry: 0, rz: 0, s:   1, w: 2,    h: 2    };
@@ -1262,3 +1263,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateContext();
 })();
+DEBUG_END */
