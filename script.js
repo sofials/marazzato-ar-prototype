@@ -365,7 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     await arSystem.start(); // MindAR chiede la camera qui
     scanHint.classList.remove('hidden');
-    tapHint.classList.remove('hidden');
 
   } catch (err) {
     console.warn('Errore avvio AR:', err.name, err.message);
@@ -393,8 +392,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideUI() {
     dial.classList.add('hidden');
     photoCaption.classList.add('hidden');
+    tapHint.classList.add('hidden');
     scanHint.classList.remove('hidden');
-    tapHint.classList.remove('hidden');
   }
 
   const calendarioOverlay = document.getElementById('calendario-overlay');
@@ -509,7 +508,6 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion1.classList.add('hidden');
         infoCamion1.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
-        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -527,7 +525,6 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion2.classList.add('hidden');
         infoCamion2.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
-        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -545,7 +542,6 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion3.classList.add('hidden');
         infoCamion3.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
-        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -937,12 +933,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const postitStates = {
     past:    defaultState({ px: -2.45, rx: 60, s: 0.8 }),
     present: defaultState({ px: -2.45, rx: 60, s: 0.8 }),
-    future:  defaultState({ px: -3.3,  rx: 90, s: 1.2 }),
+    future:  defaultState({ px: -3.15, py: 0.40, rx: 90, s: 1.2 }),
   };
   const disegnoStates = {
-    past:    Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
-    present: Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
-    future:  Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
+    past:    Object.assign(defaultState({ py: 0.40, s: 1.8 }), { w: 1.2, h: 0.8 }),
+    present: Object.assign(defaultState({ py: 0.40, s: 1.8 }), { w: 1.2, h: 0.8 }),
+    future:  Object.assign(defaultState({ py: 0.40, s: 2.4 }), { w: 1.2, h: 0.8 }),
   };
 
   try {
