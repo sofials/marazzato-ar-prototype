@@ -22,9 +22,170 @@ AFRAME.registerComponent('model-opacity', {
 });
 
 // === GESTIONE UI E AR ===
+// === INTERNAZIONALIZZAZIONE ===
+const strings = {
+  it: {
+    subtitle:        "Un'indagine sulla memoria",
+    intro_text:      "Una famiglia ha lasciato tutto in questa sala.<br>I camion. Gli oggetti. Trent'anni di una storia che qualcuno deve ancora ricostruire.<br><br>Indaga i marker per portare in superficie le tre versioni di ciò che è accaduto.",
+    start:           "INIZIA",
+    how_it_works:    "COME FUNZIONA",
+    retry:           "RIPROVA",
+    tutorial_title:  "COME FUNZIONA",
+    tutorial_intro:  "Sei entrato in un archivio. Questi sono gli strumenti dell'indagine.",
+    step1_title:     "INQUADRA",
+    step1_desc:      "Punta la fotocamera su un marker numerato in sala. L'oggetto si rivela.",
+    step2_title:     "RUOTA LA GHIERA",
+    step2_desc:      "Passa tra PASSATO · PRESENTE · FUTURO per vedere come la storia è cambiata.",
+    step3_title:     "LEGGI LE TRACCE",
+    step3_desc:      "Ogni strato rivela qualcosa di diverso. Nessuna risposta è definitiva.",
+    close:           "CHIUDI",
+    scan_hint:       "INQUADRA IL MARKER",
+    tap_hint:        "Tocca gli oggetti per leggere meglio",
+    past:            "PASSATO",
+    present:         "PRESENTE",
+    future:          "FUTURO",
+    camion1_tag:     "09 — Veicolo storico",
+    camion1_year:    "Italia · 1950",
+    camion1_note:    "Allestimento antincendio su telaio commerciale — pratica standard nei VVF italiani degli anni '50, quando i mezzi dedicati erano ancora rari.",
+    camion2_tag:     "10 — Veicolo storico",
+    camion2_year:    "Italia · 1957",
+    camion2_note:    "Allestimento antincendio su telaio pesante — il doppio della portata del suo predecessore, per interventi più complessi.<br>La notte del 1957, era questo il motore che si sentiva arrivare.",
+    camion3_tag:     "11 — Veicolo storico",
+    camion3_year:    "Italia · 1974",
+    camion3_note:    "Allestimento antincendio su telaio commerciale, cabina avanzata.<br>Vent'anni di strada. Lo stesso rosso. Lo stesso rombo.",
+    spec_engine:     "Motore",
+    spec_payload:    "Portata",
+    spec_maxspeed:   "Vel. max",
+    spec_gearbox:    "Cambio",
+    diary_past_date:    "Settembre 1950",
+    diary_past_quote:   "«Oggi al lavoro tutto come sempre. A casa Carlo mi ha letto due pagine del suo libro. Quello dei mestieri. Vuole fare il pompiere. Per ora.»",
+    diary_future_date:  "Anni dopo il fuoco",
+    diary_future_quote: "«Ho ripiantato il limone in giardino. Cresce.»",
+    cal_past_month:     "Settembre 1950",
+    cal_past_day1: "Lun 4",  cal_past_event1: "Visita medico 9.30",
+    cal_past_day2: "Ven 5",  cal_past_event2: "Compleanno nonna",
+    cal_past_day3: "Lun 11", cal_past_event3: "Primo giorno Carlo",
+    cal_past_day4: "Mer 13", cal_past_event4: "Partenza campeggio",
+    cal_future_month:   "Maggio 1974",
+    cal_future_day1: "Mer 13", cal_future_event1: "Telefonare mamma",
+    cal_future_day2: "Dom 17", cal_future_event2: "Visita al Museo Marazzato",
+    cal_future_day3: "Sab 30", cal_future_event3: "Saggio scuola",
+    postit_title:       "RUBRICA",
+    postit_past_name1: "Vigili del fuoco — Vercelli", postit_past_name2: "Carabinieri",
+    postit_past_name3: "Farmacia Centr.",             postit_past_name4: "Dott. Barbero (medico)",
+    postit_past_name5: "Zia Rosa",
+    postit_past_note:  "Negli anni '50 non esisteva un numero unico nazionale. Le emergenze venivano gestite tramite centralini locali e caserme provinciali.",
+    postit_future_name1: "Vigili del fuoco", postit_future_name2: "Carabinieri",
+    postit_future_name3: "Farmacia Centr.",  postit_future_name4: "Dott. Barbero (medico)",
+    postit_future_name5: "Zia Rosa",
+    postit_future_note: "Dal 1987 il numero unico 115 centralizza le emergenze dei Vigili del Fuoco in Italia.",
+  },
+  en: {
+    subtitle:        "An investigation into memory",
+    intro_text:      "A family left everything in this room.<br>The trucks. The objects. Thirty years of a story that someone still needs to piece together.<br><br>Explore the markers to uncover the three versions of what happened.",
+    start:           "START",
+    how_it_works:    "HOW IT WORKS",
+    retry:           "TRY AGAIN",
+    tutorial_title:  "HOW IT WORKS",
+    tutorial_intro:  "You've entered an archive. These are the tools of investigation.",
+    step1_title:     "SCAN",
+    step1_desc:      "Point the camera at a numbered marker in the room. The object reveals itself.",
+    step2_title:     "TURN THE DIAL",
+    step2_desc:      "Move between PAST · PRESENT · FUTURE to see how the story changed.",
+    step3_title:     "READ THE TRACES",
+    step3_desc:      "Each layer reveals something different. No answer is definitive.",
+    close:           "CLOSE",
+    scan_hint:       "SCAN THE MARKER",
+    tap_hint:        "Tap objects to read them better",
+    past:            "PAST",
+    present:         "PRESENT",
+    future:          "FUTURE",
+    camion1_tag:     "09 — Historic vehicle",
+    camion1_year:    "Italy · 1950",
+    camion1_note:    "Fire truck configuration on a commercial chassis — standard practice for Italian fire brigades in the 1950s, when dedicated vehicles were still rare.",
+    camion2_tag:     "10 — Historic vehicle",
+    camion2_year:    "Italy · 1957",
+    camion2_note:    "Fire truck configuration on a heavy chassis — double the payload of its predecessor, for more complex operations.<br>That night in 1957, this was the engine you could hear arriving.",
+    camion3_tag:     "11 — Historic vehicle",
+    camion3_year:    "Italy · 1974",
+    camion3_note:    "Fire truck configuration on a commercial chassis, forward cab.<br>Twenty years on the road. The same red. The same roar.",
+    spec_engine:     "Engine",
+    spec_payload:    "Payload",
+    spec_maxspeed:   "Max speed",
+    spec_gearbox:    "Gearbox",
+    diary_past_date:    "September 1950",
+    diary_past_quote:   "«Today at work, same as always. At home Carlo read me two pages of his book. The one about jobs. He wants to be a firefighter. For now.»",
+    diary_future_date:  "Years after the fire",
+    diary_future_quote: "«I replanted the lemon tree in the garden. It grows.»",
+    cal_past_month:     "September 1950",
+    cal_past_day1: "Mon 4",  cal_past_event1: "Doctor's appointment 9.30",
+    cal_past_day2: "Fri 5",  cal_past_event2: "Grandma's birthday",
+    cal_past_day3: "Mon 11", cal_past_event3: "Carlo's first day",
+    cal_past_day4: "Wed 13", cal_past_event4: "Camping departure",
+    cal_future_month:   "May 1974",
+    cal_future_day1: "Wed 13", cal_future_event1: "Call mom",
+    cal_future_day2: "Sun 17", cal_future_event2: "Visit to Museo Marazzato",
+    cal_future_day3: "Sat 30", cal_future_event3: "School recital",
+    postit_title:       "DIRECTORY",
+    postit_past_name1: "Fire Brigade — Vercelli", postit_past_name2: "Carabinieri",
+    postit_past_name3: "Central Pharmacy",        postit_past_name4: "Dr. Barbero (physician)",
+    postit_past_name5: "Aunt Rosa",
+    postit_past_note:  "In the 1950s there was no national emergency number. Emergencies were managed through local switchboards and provincial barracks.",
+    postit_future_name1: "Fire Brigade", postit_future_name2: "Carabinieri",
+    postit_future_name3: "Central Pharmacy", postit_future_name4: "Dr. Barbero (physician)",
+    postit_future_name5: "Aunt Rosa",
+    postit_future_note: "Since 1987, the unified number 115 centralizes Fire Brigade emergencies in Italy.",
+  },
+};
+
+let currentLang = 'it';
+let _onLangChange = null;
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  const s = strings[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (s[key] !== undefined) el.textContent = s[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (s[key] !== undefined) el.innerHTML = s[key];
+  });
+  document.documentElement.lang = lang;
+  if (_onLangChange) _onLangChange();
+}
+
+function getCalTexId(tl) {
+  if (tl === 'present') return '#tex-calendario-present';
+  return currentLang === 'en' ? `#tex-calendario-${tl}-en` : `#tex-calendario-${tl}`;
+}
+
+function getDrawTexId(tl) {
+  return currentLang === 'en' ? `#tex-drawing-${tl}-en` : `#tex-drawing-${tl}`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  const startBtn = document.getElementById('start-btn');
+  // Language picker
+  const langPicker = document.getElementById('lang-picker');
   const intro = document.getElementById('intro');
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyLanguage(btn.dataset.lang);
+      refreshLabels();
+      langPicker.style.display = 'none';
+      intro.style.display = '';
+    });
+  });
+
+  function refreshLabels() {
+    labels.past    = strings[currentLang].past;
+    labels.present = strings[currentLang].present;
+    labels.future  = strings[currentLang].future;
+    dialLabel.textContent = labels[currentTimeline];
+  }
+
+  const startBtn = document.getElementById('start-btn');
   const tutorialEl = document.getElementById('tutorial');
   const helpBtn = document.getElementById('help-btn');
 
@@ -36,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('tutorial-close-btn2').addEventListener('click', closeTutorial);
   helpBtn.addEventListener('click', openTutorial);
   const scanHint = document.getElementById('scan-hint');
+  const tapHint  = document.getElementById('tap-hint');
   const dial = document.getElementById('timeline-dial');
   const dialSvg = document.getElementById('dial-svg');
   const needle = document.getElementById('needle');
@@ -57,11 +219,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const plantModel = document.getElementById('plant-model');
   const targetDiario = document.getElementById('ar-target-diario');
   const diaryOverlay = document.getElementById('diary-overlay');
-  const diaries = {
-    past:    [document.getElementById('diario-past-model')],
-    present: [document.getElementById('diario-present-model')],
-    future:  [document.getElementById('diario-future-model')],
+  const diariesByLang = {
+    it: {
+      past:    [document.getElementById('diario-past-model')],
+      present: [document.getElementById('diario-present-model')],
+      future:  [document.getElementById('diario-future-model')],
+    },
+    en: {
+      past:    [document.getElementById('diario-past-model-en')],
+      present: [document.getElementById('diario-present-model')],
+      future:  [document.getElementById('diario-future-model-en')],
+    },
   };
+  function getDiaries() { return diariesByLang[currentLang]; }
 
   const targetPostit = document.getElementById('ar-target-postit');
   const postits = {
@@ -96,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tickFuture  = document.getElementById('tick-future');
 
   const angles = { past: -90, present: 0, future: 90 };
-  const labels = { past: 'PASSATO', present: 'PRESENTE', future: 'FUTURO' };
+  let labels = { past: strings[currentLang].past, present: strings[currentLang].present, future: strings[currentLang].future };
 
   let currentTimeline = 'present';
   let isDragging = false;
@@ -107,6 +277,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // Reset stato iniziale
   dialLabel.textContent = labels['present'];
   currentTimeline = 'present';
+
+  // Swap modelli/texture AR quando cambia la lingua mentre un marker è attivo
+  _onLangChange = function () {
+    const tl = currentTimeline;
+    if (activeTarget === 'diario') {
+      ['past', 'present', 'future'].forEach(t => {
+        ['it', 'en'].forEach(l => {
+          diariesByLang[l][t].forEach(m => {
+            if (!m) return;
+            const show = l === currentLang && t === tl;
+            m.setAttribute('visible', show ? 'true' : 'false');
+            setOpacity(m, show ? 1 : 0);
+          });
+        });
+      });
+    }
+    if (activeTarget === 'calendario') {
+      calendarioPlane.setAttribute('src', getCalTexId(tl));
+    }
+    if (activeTarget === 'disegno') {
+      drawingPlane.setAttribute('src', getDrawTexId(tl));
+    }
+  };
 
   // === AVVIO AR E RICHIESTA FOTOCAMERA ===
 
@@ -155,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
     introDefault.style.display = 'none';
     introDenied.style.display = 'none';
     intro.classList.add('hidden');
-    scanHint.classList.remove('hidden');
 
     // Lascia che MindAR gestisca la camera direttamente
     const arSystem = sceneEl.systems['mindar-image-system'];
@@ -172,10 +364,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     await arSystem.start(); // MindAR chiede la camera qui
+    scanHint.classList.remove('hidden');
+    tapHint.classList.remove('hidden');
 
   } catch (err) {
     console.warn('Errore avvio AR:', err.name, err.message);
     scanHint.classList.add('hidden');
+    tapHint.classList.add('hidden');
     intro.classList.remove('hidden');
     if (err.name === 'NotAllowedError') {
       showDeniedInstructions('denied');
@@ -191,6 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showUI() {
     scanHint.classList.add('hidden');
+    tapHint.classList.add('hidden');
     dial.classList.remove('hidden');
   }
 
@@ -198,17 +394,54 @@ document.addEventListener("DOMContentLoaded", () => {
     dial.classList.add('hidden');
     photoCaption.classList.add('hidden');
     scanHint.classList.remove('hidden');
+    tapHint.classList.remove('hidden');
   }
+
+  const calendarioOverlay = document.getElementById('calendario-overlay');
+
+  function openCalendarioOverlay() {
+    if (currentTimeline === 'present') return;
+    document.getElementById('calendario-content-past').classList.toggle('hidden', currentTimeline !== 'past');
+    document.getElementById('calendario-content-future').classList.toggle('hidden', currentTimeline !== 'future');
+    calendarioOverlay.classList.remove('hidden');
+    tapHint.classList.add('hidden');
+  }
+
+  function closeCalendarioOverlay() {
+    calendarioOverlay.classList.add('hidden');
+    if (activeTarget === 'calendario') tapHint.classList.remove('hidden');
+  }
+
+  document.getElementById('calendario-close-btn').addEventListener('click', closeCalendarioOverlay);
+
+  const postitOverlay = document.getElementById('postit-overlay');
+
+  function openPostitOverlay() {
+    if (currentTimeline === 'present') return;
+    document.getElementById('postit-content-past').classList.toggle('hidden', currentTimeline !== 'past');
+    document.getElementById('postit-content-future').classList.toggle('hidden', currentTimeline !== 'future');
+    postitOverlay.classList.remove('hidden');
+    tapHint.classList.add('hidden');
+  }
+
+  function closePostitOverlay() {
+    postitOverlay.classList.add('hidden');
+    if (activeTarget === 'postit') tapHint.classList.remove('hidden');
+  }
+
+  document.getElementById('postit-close-btn').addEventListener('click', closePostitOverlay);
 
   function openDiaryOverlay() {
     if (currentTimeline === 'present') return;
     document.getElementById('diary-content-past').classList.toggle('hidden', currentTimeline !== 'past');
     document.getElementById('diary-content-future').classList.toggle('hidden', currentTimeline !== 'future');
     diaryOverlay.classList.remove('hidden');
+    tapHint.classList.add('hidden');
   }
 
   function closeDiaryOverlay() {
     diaryOverlay.classList.add('hidden');
+    if (activeTarget === 'diario') tapHint.classList.remove('hidden');
   }
 
   document.getElementById('diary-close-btn').addEventListener('click', closeDiaryOverlay);
@@ -253,11 +486,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🎯 TARGET 3 (calendario) trovato');
       activeTarget = 'calendario';
       showUI();
+      tapHint.classList.remove('hidden');
       syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'calendario' }));
     });
     targetCalendario.addEventListener('targetLost', () => {
-      if (activeTarget === 'calendario') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
+      if (activeTarget === 'calendario') { activeTarget = null; closeCalendarioOverlay(); hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
     });
   }
   if (targetCamion1 && infoCamion1) {
@@ -265,6 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🚒 TARGET 8 (camion1) trovato');
       activeTarget = 'camion1';
       scanHint.classList.add('hidden');
+      tapHint.classList.add('hidden');
       infoCamion1.classList.remove('hidden');
     });
     targetCamion1.addEventListener('targetLost', () => {
@@ -273,6 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion1.classList.add('hidden');
         infoCamion1.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
+        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -281,6 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🚒 TARGET 9 (camion2) trovato');
       activeTarget = 'camion2';
       scanHint.classList.add('hidden');
+      tapHint.classList.add('hidden');
       infoCamion2.classList.remove('hidden');
     });
     targetCamion2.addEventListener('targetLost', () => {
@@ -289,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion2.classList.add('hidden');
         infoCamion2.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
+        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -297,6 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🚒 TARGET 10 (camion3) trovato');
       activeTarget = 'camion3';
       scanHint.classList.add('hidden');
+      tapHint.classList.add('hidden');
       infoCamion3.classList.remove('hidden');
     });
     targetCamion3.addEventListener('targetLost', () => {
@@ -305,6 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
         infoCamion3.classList.add('hidden');
         infoCamion3.classList.remove('collapsed');
         scanHint.classList.remove('hidden');
+        tapHint.classList.remove('hidden');
       }
     });
   }
@@ -320,6 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('📓 TARGET 6 (diario) trovato');
       activeTarget = 'diario';
       showUI();
+      tapHint.classList.remove('hidden');
       syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'diario' }));
     });
@@ -338,12 +579,14 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('📌 TARGET 5 (postit) trovato');
       activeTarget = 'postit';
       showUI();
+      tapHint.classList.remove('hidden');
       syncActiveTarget();
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'postit' }));
     });
     targetPostit.addEventListener('targetLost', () => {
       if (activeTarget === 'postit') {
         activeTarget = null;
+        closePostitOverlay();
         hideUI();
         document.dispatchEvent(new CustomEvent('mm-target', { detail: null }));
       }
@@ -372,6 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log('🌱 TARGET 2 (piantina) trovato');
       activeTarget = 'piantina';
       scanHint.classList.add('hidden');
+      tapHint.classList.add('hidden');
       document.dispatchEvent(new CustomEvent('mm-target', { detail: 'germoglio' }));
       if (plantModel) {
         plantModel.removeAttribute('animation-mixer');
@@ -427,10 +671,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tl === 'past') photoCaption.classList.remove('hidden');
       else photoCaption.classList.add('hidden');
     } else if (activeTarget === 'disegno') {
-      drawingPlane.setAttribute('src', `#tex-drawing-${tl}`);
+      drawingPlane.setAttribute('src', getDrawTexId(tl));
       setOpacity(drawingPlane, 1);
     } else if (activeTarget === 'calendario') {
-      calendarioPlane.setAttribute('src', `#tex-calendario-${tl}`);
+      calendarioPlane.setAttribute('src', getCalTexId(tl));
       setOpacity(calendarioPlane, 1);
     } else if (activeTarget === 'vase') {
       ['past', 'present', 'future'].forEach(t => {
@@ -439,9 +683,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (vases[tl]) setOpacity(vases[tl], 1);
     } else if (activeTarget === 'diario') {
       ['past', 'present', 'future'].forEach(t => {
-        diaries[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
+        ['it', 'en'].forEach(l => {
+          diariesByLang[l][t].forEach(m => { if (m) m.setAttribute('visible', l === currentLang && t === tl ? 'true' : 'false'); });
+        });
       });
-      diaries[tl].forEach(m => { if (m) setOpacity(m, 1); });
+      getDiaries()[tl].forEach(m => { if (m) setOpacity(m, 1); });
     } else if (activeTarget === 'postit') {
       ['past', 'present', 'future'].forEach(t => {
         postits[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
@@ -488,13 +734,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (activeTarget === 'disegno') {
       animateFade(drawingPlane, true, fadeTime);
       setTimeout(() => {
-        drawingPlane.setAttribute('src', `#tex-drawing-${timeline}`);
+        drawingPlane.setAttribute('src', getDrawTexId(timeline));
         animateFade(drawingPlane, false, fadeTime, () => { isFading = false; });
       }, fadeTime);
     } else if (activeTarget === 'calendario') {
       animateFade(calendarioPlane, true, fadeTime);
       setTimeout(() => {
-        calendarioPlane.setAttribute('src', `#tex-calendario-${timeline}`);
+        calendarioPlane.setAttribute('src', getCalTexId(timeline));
         animateFade(calendarioPlane, false, fadeTime, () => { isFading = false; });
       }, fadeTime);
     } else if (activeTarget === 'vase') {
@@ -513,11 +759,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }, fadeTime);
     } else if (activeTarget === 'diario') {
       if (!diaryOverlay.classList.contains('hidden')) closeDiaryOverlay();
-      const oldPieces = diaries[oldTimeline];
-      const newPieces = diaries[timeline];
+      const oldPieces = getDiaries()[oldTimeline];
+      const newPieces = getDiaries()[timeline];
       oldPieces.forEach(m => animateFade(m, true, fadeTime));
       setTimeout(() => {
-        oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
+        // Nascondi tutti i modelli del vecchio timeline (tutte le lingue)
+        ['it', 'en'].forEach(l => { diariesByLang[l][oldTimeline].forEach(m => { if (m) m.setAttribute('visible', 'false'); }); });
         const last = newPieces[newPieces.length - 1];
         newPieces.forEach(m => {
           if (!m) return;
@@ -633,6 +880,22 @@ document.addEventListener("DOMContentLoaded", () => {
     openDiaryOverlay();
   }, { passive: true });
 
+  // Tap su canvas AR per aprire overlay calendario
+  sceneEl.addEventListener('touchstart', (e) => {
+    if (activeTarget !== 'calendario') return;
+    if (!calendarioOverlay.classList.contains('hidden')) return;
+    if (dial.contains(e.target)) return;
+    openCalendarioOverlay();
+  }, { passive: true });
+
+  // Tap su canvas AR per aprire overlay rubrica/post-it
+  sceneEl.addEventListener('touchstart', (e) => {
+    if (activeTarget !== 'postit') return;
+    if (!postitOverlay.classList.contains('hidden')) return;
+    if (dial.contains(e.target)) return;
+    openPostitOverlay();
+  }, { passive: true });
+
   // Tap diretto sulle tacche
   tickPast.addEventListener('click',    () => { if (!isFading) { setNeedleAngle(angles.past, true);    applyTimeline('past');    } });
   tickPresent.addEventListener('click', () => { if (!isFading) { setNeedleAngle(angles.present, true); applyTimeline('present'); } });
@@ -711,8 +974,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const ids = activeTimeline === 'present'
         ? [`diario-present-model`]
         : activeTimeline === 'past'
-          ? [`diario-past-model`]
-          : [`diario-future-model`];
+          ? [`diario-past-model`, `diario-past-model-en`]
+          : [`diario-future-model`, `diario-future-model-en`];
       return ids.map(id => document.getElementById(id)).filter(Boolean);
     }
     if (activeDbgTarget === 'libro') {
@@ -917,8 +1180,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const ids = t === 'present'
       ? [`diario-present-model`]
       : t === 'past'
-        ? [`diario-past-model`]
-        : [`diario-future-model`];
+        ? [`diario-past-model`, `diario-past-model-en`]
+        : [`diario-future-model`, `diario-future-model-en`];
     const s = diarioStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);

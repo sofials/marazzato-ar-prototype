@@ -34,6 +34,56 @@ body {
   pointer-events: none;
 }
 
+/* Language picker */
+#lang-picker {
+  position: fixed;
+  inset: 0;
+  background: rgba(48, 48, 48, 0.98);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 2rem;
+}
+.lang-picker-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+.lang-logo {
+  width: 80px;
+  opacity: 0.9;
+}
+.lang-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--mm-cream);
+  letter-spacing: 0.15em;
+}
+.lang-buttons {
+  display: flex;
+  gap: 1rem;
+}
+.lang-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.9rem 2rem;
+  border: 2px solid var(--mm-cream);
+  background: transparent;
+  color: var(--mm-cream);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-btn:active {
+  background: var(--mm-cream);
+  color: var(--mm-dark);
+}
+
 /* Sfondo scuro semi-trasparente dietro la card */
 #intro {
   position: fixed;
@@ -310,6 +360,23 @@ body {
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
+#tap-hint {
+  position: fixed;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(244, 241, 234, 0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  z-index: 50;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
 #timeline-dial {
   position: fixed;
   bottom: 2rem;
@@ -571,5 +638,176 @@ body {
   line-height: 1.55;
   color: var(--mm-dark);
   margin: 0;
+  font-style: italic;
+}
+
+/* === Overlay UI Calendario === */
+#calendario-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 51, 51, 0.82);
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.calendario-card {
+  background: var(--mm-cream);
+  border-radius: 4px;
+  border-left: 3px solid var(--mm-red);
+  padding: 2rem 1.8rem 1.8rem;
+  max-width: 340px;
+  width: 100%;
+  position: relative;
+}
+
+#calendario-close-btn {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--mm-dark);
+  opacity: 0.4;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  padding: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+#calendario-close-btn:active { opacity: 1; }
+
+.calendario-month {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mm-red);
+  margin-bottom: 1.2rem;
+}
+
+.calendario-entries {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cal-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+}
+
+.cal-day {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mm-red);
+  min-width: 3.2rem;
+  flex-shrink: 0;
+}
+
+.cal-event {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--mm-dark);
+  line-height: 1.3;
+}
+
+/* === Overlay UI Rubrica / Post-it === */
+#postit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 51, 51, 0.82);
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.postit-card {
+  background: var(--mm-cream);
+  border-radius: 4px;
+  border-left: 3px solid var(--mm-dark);
+  padding: 2rem 1.8rem 1.6rem;
+  max-width: 360px;
+  width: 100%;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#postit-close-btn {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--mm-dark);
+  opacity: 0.4;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  padding: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+#postit-close-btn:active { opacity: 1; }
+
+.postit-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mm-dark);
+  margin-bottom: 1.2rem;
+}
+
+.postit-entries {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.postit-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(51,51,51,0.12);
+}
+.postit-entry:last-child { border-bottom: none; }
+
+.postit-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mm-dark);
+  flex: 1;
+}
+
+.postit-number {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--mm-dark);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.postit-note {
+  margin-top: 1.1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(51,51,51,0.55);
+  line-height: 1.5;
   font-style: italic;
 }

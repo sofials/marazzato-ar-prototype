@@ -25,24 +25,36 @@
   <!-- Logo Overlay (Placeholder) -->
   <div id="logo-overlay">MM</div>
 
+  <!-- Selezione lingua -->
+  <div id="lang-picker">
+    <div class="lang-picker-inner">
+      <img src="assets/logo.png" alt="Logo" class="lang-logo">
+      <h1 class="lang-title">THREE TIMELINES</h1>
+      <div class="lang-buttons">
+        <button class="lang-btn" data-lang="it">ITALIANO</button>
+        <button class="lang-btn" data-lang="en">ENGLISH</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Schermata intro -->
-  <div id="intro">
+  <div id="intro" style="display:none">
     <div class="intro-card">
       <img src="assets/logo.png" alt="Logo Museo Marazzato" class="intro-logo">
       <h1>THREE TIMELINES</h1>
-      <p class="subtitle">Un'indagine sulla memoria</p>
+      <p class="subtitle" data-i18n="subtitle">Un'indagine sulla memoria</p>
 
       <!-- Stato normale -->
       <div id="intro-default">
-        <p class="instructions">Una famiglia ha lasciato tutto in questa sala.<br>I camion. Gli oggetti. Trent'anni di una storia che qualcuno deve ancora ricostruire.<br><br>Indaga i marker per portare in superficie le tre versioni di ciò che è accaduto.</p>
-        <button id="start-btn">INIZIA</button>
-        <button id="tutorial-open-btn">COME FUNZIONA</button>
+        <p class="instructions" data-i18n-html="intro_text">Una famiglia ha lasciato tutto in questa sala.<br>I camion. Gli oggetti. Trent'anni di una storia che qualcuno deve ancora ricostruire.<br><br>Indaga i marker per portare in superficie le tre versioni di ciò che è accaduto.</p>
+        <button id="start-btn" data-i18n="start">INIZIA</button>
+        <button id="tutorial-open-btn" data-i18n="how_it_works">COME FUNZIONA</button>
       </div>
 
       <!-- Stato: permesso negato -->
       <div id="intro-denied" style="display:none;">
         <p class="instructions" style="color:#c93327;"></p>
-        <button id="retry-btn">RIPROVA</button>
+        <button id="retry-btn" data-i18n="retry">RIPROVA</button>
       </div>
     </div>
   </div>
@@ -54,36 +66,37 @@
   <div id="tutorial" class="hidden">
     <div class="tutorial-card">
       <button id="tutorial-close-btn" aria-label="Chiudi">✕</button>
-      <h2 class="tutorial-title">COME FUNZIONA</h2>
-      <p class="tutorial-intro">Sei entrato in un archivio. Questi sono gli strumenti dell'indagine.</p>
+      <h2 class="tutorial-title" data-i18n="tutorial_title">COME FUNZIONA</h2>
+      <p class="tutorial-intro" data-i18n="tutorial_intro">Sei entrato in un archivio. Questi sono gli strumenti dell'indagine.</p>
       <div class="tutorial-steps">
         <div class="tutorial-step">
           <span class="tutorial-step-num">01</span>
           <div>
-            <strong>INQUADRA</strong>
-            <p>Punta la fotocamera su un marker numerato in sala. L'oggetto si rivela.</p>
+            <strong data-i18n="step1_title">INQUADRA</strong>
+            <p data-i18n="step1_desc">Punta la fotocamera su un marker numerato in sala. L'oggetto si rivela.</p>
           </div>
         </div>
         <div class="tutorial-step">
           <span class="tutorial-step-num">02</span>
           <div>
-            <strong>RUOTA LA GHIERA</strong>
-            <p>Passa tra PASSATO · PRESENTE · FUTURO per vedere come la storia è cambiata.</p>
+            <strong data-i18n="step2_title">RUOTA LA GHIERA</strong>
+            <p data-i18n="step2_desc">Passa tra PASSATO · PRESENTE · FUTURO per vedere come la storia è cambiata.</p>
           </div>
         </div>
         <div class="tutorial-step">
           <span class="tutorial-step-num">03</span>
           <div>
-            <strong>LEGGI LE TRACCE</strong>
-            <p>Ogni strato rivela qualcosa di diverso. Nessuna risposta è definitiva.</p>
+            <strong data-i18n="step3_title">LEGGI LE TRACCE</strong>
+            <p data-i18n="step3_desc">Ogni strato rivela qualcosa di diverso. Nessuna risposta è definitiva.</p>
           </div>
         </div>
       </div>
-      <button id="tutorial-close-btn2">CHIUDI</button>
+      <button id="tutorial-close-btn2" data-i18n="close">CHIUDI</button>
     </div>
   </div>
   <!-- Hint quando cerca il marker -->
-  <div id="scan-hint" class="hidden">INQUADRA IL MARKER</div>
+  <div id="scan-hint" class="hidden" data-i18n="scan_hint">INQUADRA IL MARKER</div>
+  <div id="tap-hint" class="hidden" data-i18n="tap_hint">Tocca gli oggetti per leggere meglio</div>
 
   <!-- Ghiera timeline -->
   <div id="timeline-dial" class="hidden">
@@ -119,29 +132,29 @@
   <div id="info-card-camion1" class="info-card hidden">
     <div class="info-card-header">
       <div>
-        <div class="info-tag">09 — Veicolo storico</div>
+        <div class="info-tag" data-i18n="camion1_tag">09 — Veicolo storico</div>
         <h2 class="info-title">FIAT 640 N</h2>
       </div>
       <button class="info-toggle-btn" aria-label="Chiudi">↓</button>
     </div>
     <div class="info-card-body">
-      <div class="info-year">Italia · 1950</div>
+      <div class="info-year" data-i18n="camion1_year">Italia · 1950</div>
       <div class="info-divider"></div>
       <dl class="info-specs">
         <div class="info-spec-row">
-          <dt>Motore</dt>
+          <dt data-i18n="spec_engine">Motore</dt>
           <dd>Diesel iniezione diretta · 6 cil. · 6.032 cc · 72 CV</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Portata</dt>
+          <dt data-i18n="spec_payload">Portata</dt>
           <dd>4,5 tonnellate</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Vel. max</dt>
+          <dt data-i18n="spec_maxspeed">Vel. max</dt>
           <dd>65 km/h</dd>
         </div>
       </dl>
-      <p class="info-note">Allestimento antincendio su telaio commerciale — pratica standard nei VVF italiani degli anni '50, quando i mezzi dedicati erano ancora rari.</p>
+      <p class="info-note" data-i18n="camion1_note">Allestimento antincendio su telaio commerciale — pratica standard nei VVF italiani degli anni '50, quando i mezzi dedicati erano ancora rari.</p>
     </div>
   </div>
 
@@ -149,29 +162,29 @@
   <div id="info-card-camion2" class="info-card hidden">
     <div class="info-card-header">
       <div>
-        <div class="info-tag">10 — Veicolo storico</div>
+        <div class="info-tag" data-i18n="camion2_tag">10 — Veicolo storico</div>
         <h2 class="info-title">FIAT 682 N</h2>
       </div>
       <button class="info-toggle-btn" aria-label="Chiudi">↓</button>
     </div>
     <div class="info-card-body">
-      <div class="info-year">Italia · 1957</div>
+      <div class="info-year" data-i18n="camion2_year">Italia · 1957</div>
       <div class="info-divider"></div>
       <dl class="info-specs">
         <div class="info-spec-row">
-          <dt>Motore</dt>
+          <dt data-i18n="spec_engine">Motore</dt>
           <dd>Diesel iniezione diretta · 6 cil. · 10.170 cc · 140 CV</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Portata</dt>
+          <dt data-i18n="spec_payload">Portata</dt>
           <dd>8 tonnellate</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Cambio</dt>
+          <dt data-i18n="spec_gearbox">Cambio</dt>
           <dd>8 velocità</dd>
         </div>
       </dl>
-      <p class="info-note">Allestimento antincendio su telaio pesante — il doppio della portata del suo predecessore, per interventi più complessi.<br>La notte del 1957, era questo il motore che si sentiva arrivare.</p>
+      <p class="info-note" data-i18n-html="camion2_note">Allestimento antincendio su telaio pesante — il doppio della portata del suo predecessore, per interventi più complessi.<br>La notte del 1957, era questo il motore che si sentiva arrivare.</p>
     </div>
   </div>
 
@@ -179,33 +192,33 @@
   <div id="info-card-camion3" class="info-card hidden">
     <div class="info-card-header">
       <div>
-        <div class="info-tag">11 — Veicolo storico</div>
+        <div class="info-tag" data-i18n="camion3_tag">11 — Veicolo storico</div>
         <h2 class="info-title">FIAT 650 N</h2>
       </div>
       <button class="info-toggle-btn" aria-label="Chiudi">↓</button>
     </div>
     <div class="info-card-body">
-      <div class="info-year">Italia · 1974</div>
+      <div class="info-year" data-i18n="camion3_year">Italia · 1974</div>
       <div class="info-divider"></div>
       <dl class="info-specs">
         <div class="info-spec-row">
-          <dt>Motore</dt>
+          <dt data-i18n="spec_engine">Motore</dt>
           <dd>Diesel iniezione diretta · 6 cil. · 4.678 cc · 99 CV</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Portata</dt>
+          <dt data-i18n="spec_payload">Portata</dt>
           <dd>5 tonnellate</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Vel. max</dt>
+          <dt data-i18n="spec_maxspeed">Vel. max</dt>
           <dd>80 km/h</dd>
         </div>
         <div class="info-spec-row">
-          <dt>Cambio</dt>
+          <dt data-i18n="spec_gearbox">Cambio</dt>
           <dd>5 velocità sincronizzate · servofreno idropneumatico</dd>
         </div>
       </dl>
-      <p class="info-note">Allestimento antincendio su telaio commerciale, cabina avanzata.<br>Vent'anni di strada. Lo stesso rosso. Lo stesso rombo.</p>
+      <p class="info-note" data-i18n-html="camion3_note">Allestimento antincendio su telaio commerciale, cabina avanzata.<br>Vent'anni di strada. Lo stesso rosso. Lo stesso rombo.</p>
     </div>
   </div>
 
@@ -230,6 +243,12 @@
       <img id="tex-calendario-present" src="textures/calendario-present.png">
       <img id="tex-calendario-future" src="textures/calendario-future.png">
 
+      <img id="tex-calendario-past-en"   src="textures/calendario-past-eng.png">
+      <img id="tex-calendario-future-en" src="textures/calendario-future-en.png">
+      <img id="tex-drawing-past-en"      src="textures/drawingpast-en.png">
+      <img id="tex-drawing-present-en"   src="textures/drawingpresent-en.png">
+      <img id="tex-drawing-future-en"    src="textures/drawingfuture-en.png">
+
       <a-asset-item id="vaso-past-glb"    src="models/vaso-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-present-glb" src="models/vaso-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="vaso-future-glb"  src="models/vaso-future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
@@ -237,6 +256,8 @@
       <a-asset-item id="diario-past-glb"          src="models/diario-past.glb"     response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-present-glb"      src="models/diario-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="diario-future-glb"        src="models/diario_future.glb"  response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-past-glb-en"       src="models/diario_past_eng.glb"   response-type="arraybuffer" timeout="0"></a-asset-item>
+      <a-asset-item id="diario-future-glb-en"     src="models/diario_future_eng.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="rubrica-past-glb"          src="models/rubrica-past.glb"    response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="rubrica-present-glb"       src="models/rubrica-present.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
       <a-asset-item id="rubrica-future-glb"        src="models/rubrica-future.glb" response-type="arraybuffer" timeout="0"></a-asset-item>
@@ -297,6 +318,8 @@
         <a-gltf-model id="diario-past-model"      src="#diario-past-glb"          position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
         <a-gltf-model id="diario-present-model"  src="#diario-present-glb"      position="0 0 0" rotation="0 0 0" scale="1 1 1" visible="true"  model-opacity="opacity: 1"></a-gltf-model>
         <a-gltf-model id="diario-future-model"   src="#diario-future-glb"        position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-past-model-en"   src="#diario-past-glb-en"   position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
+        <a-gltf-model id="diario-future-model-en" src="#diario-future-glb-en" position="-4.30 0 0" rotation="90 0 0" scale="1.7 1.7 1.7" visible="false" model-opacity="opacity: 0"></a-gltf-model>
       </a-entity>
     </a-entity>
 
@@ -334,12 +357,116 @@
     <div class="diary-card">
       <button id="diary-close-btn" aria-label="Chiudi">✕</button>
       <div id="diary-content-past" class="diary-content">
-        <div class="diary-date">Settembre 1950</div>
-        <blockquote class="diary-quote">«Oggi al lavoro tutto come sempre. A casa Carlo mi ha letto due pagine del suo libro. Quello dei mestieri. Vuole fare il pompiere. Per ora.»</blockquote>
+        <div class="diary-date" data-i18n="diary_past_date">Settembre 1950</div>
+        <blockquote class="diary-quote" data-i18n="diary_past_quote">«Oggi al lavoro tutto come sempre. A casa Carlo mi ha letto due pagine del suo libro. Quello dei mestieri. Vuole fare il pompiere. Per ora.»</blockquote>
       </div>
       <div id="diary-content-future" class="diary-content hidden">
-        <div class="diary-date">Anni dopo il fuoco</div>
-        <blockquote class="diary-quote">«Ho ripiantato il limone in giardino. Cresce.»</blockquote>
+        <div class="diary-date" data-i18n="diary_future_date">Anni dopo il fuoco</div>
+        <blockquote class="diary-quote" data-i18n="diary_future_quote">«Ho ripiantato il limone in giardino. Cresce.»</blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay UI Calendario -->
+  <div id="calendario-overlay" class="hidden">
+    <div class="calendario-card">
+      <button id="calendario-close-btn" aria-label="Chiudi">✕</button>
+      <div id="calendario-content-past" class="calendario-content">
+        <div class="calendario-month" data-i18n="cal_past_month">Settembre 1950</div>
+        <ul class="calendario-entries">
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_past_day1">Lun 4</span>
+            <span class="cal-event" data-i18n="cal_past_event1">Visita medico 9.30</span>
+          </li>
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_past_day2">Ven 5</span>
+            <span class="cal-event" data-i18n="cal_past_event2">Compleanno nonna</span>
+          </li>
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_past_day3">Lun 11</span>
+            <span class="cal-event" data-i18n="cal_past_event3">Primo giorno Carlo</span>
+          </li>
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_past_day4">Mer 13</span>
+            <span class="cal-event" data-i18n="cal_past_event4">Partenza campeggio</span>
+          </li>
+        </ul>
+      </div>
+      <div id="calendario-content-future" class="calendario-content hidden">
+        <div class="calendario-month" data-i18n="cal_future_month">Maggio 1974</div>
+        <ul class="calendario-entries">
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_future_day1">Mer 13</span>
+            <span class="cal-event" data-i18n="cal_future_event1">Telefonare mamma</span>
+          </li>
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_future_day2">Dom 17</span>
+            <span class="cal-event" data-i18n="cal_future_event2">Visita al Museo Marazzato</span>
+          </li>
+          <li class="cal-entry">
+            <span class="cal-day" data-i18n="cal_future_day3">Sab 30</span>
+            <span class="cal-event" data-i18n="cal_future_event3">Saggio scuola</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay UI Rubrica / Post-it -->
+  <div id="postit-overlay" class="hidden">
+    <div class="postit-card">
+      <button id="postit-close-btn" aria-label="Chiudi">✕</button>
+      <div id="postit-content-past" class="postit-content">
+        <div class="postit-title" data-i18n="postit_title">RUBRICA</div>
+        <ul class="postit-entries">
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_past_name1">Vigili del fuoco — Vercelli</span>
+            <span class="postit-number">2.31.40</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_past_name2">Carabinieri</span>
+            <span class="postit-number">3.00.01</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_past_name3">Farmacia Centr.</span>
+            <span class="postit-number">3.18.55</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_past_name4">Dott. Barbero (medico)</span>
+            <span class="postit-number">4.21.10</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_past_name5">Zia Rosa</span>
+            <span class="postit-number">4.02.22</span>
+          </li>
+        </ul>
+        <p class="postit-note" data-i18n="postit_past_note">Negli anni '50 non esisteva un numero unico nazionale. Le emergenze venivano gestite tramite centralini locali e caserme provinciali.</p>
+      </div>
+      <div id="postit-content-future" class="postit-content hidden">
+        <div class="postit-title" data-i18n="postit_title">RUBRICA</div>
+        <ul class="postit-entries">
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_future_name1">Vigili del fuoco</span>
+            <span class="postit-number">115</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_future_name2">Carabinieri</span>
+            <span class="postit-number">112</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_future_name3">Farmacia Centr.</span>
+            <span class="postit-number">0161.3.18.55</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_future_name4">Dott. Barbero (medico)</span>
+            <span class="postit-number">0161.4.21.10</span>
+          </li>
+          <li class="postit-entry">
+            <span class="postit-name" data-i18n="postit_future_name5">Zia Rosa</span>
+            <span class="postit-number">0161.4.02.22</span>
+          </li>
+        </ul>
+        <p class="postit-note" data-i18n="postit_future_note">Dal 1987 il numero unico 115 centralizza le emergenze dei Vigili del Fuoco in Italia.</p>
       </div>
     </div>
   </div>
@@ -363,9 +490,9 @@
     #dbg-save-btn { margin-top: 10px; width: 100%; background: #c93327; color: #fff; border: none; padding: 10px; font-size: 13px; font-family: monospace; cursor: pointer; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
     #dbg-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 10000; align-items: center; justify-content: center; }
     #dbg-modal-overlay.visible { display: flex; }
-    #dbg-modal-box { background: #111; color: #4cff4c; padding: 20px; border-radius: 8px; max-width: 90%; font-family: monospace; font-size: 12px; }
+    #dbg-modal-box { background: #111; color: #4cff4c; padding: 20px; border-radius: 8px; max-width: 90%; max-height: 80vh; overflow-y: auto; font-family: monospace; font-size: 12px; }
     #dbg-modal-box pre { white-space: pre-wrap; word-break: break-all; margin: 0; background: #000; padding: 12px; border-radius: 4px; color: #fff; line-height: 1.8; }
-    #dbg-modal-close { margin-top: 12px; width: 100%; background: #333; color: #fff; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-family: monospace; }
+    #dbg-modal-close { margin-bottom: 12px; width: 100%; background: #333; color: #fff; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-family: monospace; }
   </style>
 
   <div id="dbg-panel">
@@ -403,9 +530,9 @@
 
   <div id="dbg-modal-overlay">
     <div id="dbg-modal-box">
+      <button id="dbg-modal-close">CHIUDI</button>
       <div style="color:#fff;font-weight:bold;margin-bottom:10px;">✓ VALORI SALVATI</div>
       <pre id="dbg-modal-text"></pre>
-      <button id="dbg-modal-close">CHIUDI</button>
     </div>
   </div>
   <!-- ===== fine debug panel ===== -->
