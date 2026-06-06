@@ -38,12 +38,12 @@ body {
 #lang-picker {
   position: fixed;
   inset: 0;
-  background: rgba(48, 48, 48, 0.98);
+  background: #F3F1E7;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 300;
+  z-index: 400;
   padding: 2rem;
 }
 .lang-picker-inner {
@@ -59,7 +59,7 @@ body {
 .lang-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: var(--mm-cream);
+  color: #222524;
   letter-spacing: 0.15em;
 }
 .lang-buttons {
@@ -72,16 +72,16 @@ body {
   font-weight: 700;
   letter-spacing: 0.12em;
   padding: 0.9rem 2rem;
-  border: 2px solid var(--mm-cream);
+  border: 2px solid #222524;
   background: transparent;
-  color: var(--mm-cream);
+  color: #222524;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
 .lang-btn:active {
-  background: var(--mm-cream);
-  color: var(--mm-dark);
+  background: #222524;
+  color: #F3F1E7;
 }
 
 /* Sfondo scuro semi-trasparente dietro la card */
@@ -98,11 +98,11 @@ body {
   overflow-y: auto;
 }
 
-/* Lo stile della Card (come da mockup) */
+/* Lo stile della Card */
 .intro-card {
   position: relative;
   background-color: var(--mm-cream);
-  border: 2px solid var(--mm-red);
+  border: 2px solid #222524;
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
@@ -113,19 +113,8 @@ body {
   overflow-y: auto;
 }
 
-/* L'effetto della linea sdoppiata scura (offset border) */
-.intro-card::after {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  right: -10px;
-  bottom: -10px;
-  border: 2px solid var(--mm-dark);
-  border-radius: 12px;
-  z-index: -1;
-  pointer-events: none;
-}
+/* Contorno rimosso — solo border singolo */
+.intro-card::after { content: none; }
 
 /* Stile del Logo */
 .intro-logo {
@@ -248,17 +237,9 @@ body {
   max-height: 90dvh;
   overflow-y: auto;
   position: relative;
-  border: 2px solid var(--mm-red);
+  border: 2px solid #222524;
 }
-.tutorial-card::after {
-  content: "";
-  position: absolute;
-  top: 8px; left: 8px; right: -10px; bottom: -10px;
-  border: 2px solid var(--mm-dark);
-  border-radius: 12px;
-  z-index: -1;
-  pointer-events: none;
-}
+.tutorial-card::after { content: none; }
 #tutorial-close-btn {
   position: absolute;
   top: 0.9rem;
@@ -368,10 +349,10 @@ body {
 
 #tap-hint {
   position: fixed;
-  top: 5rem;
+  top: 6.5rem;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(244, 241, 234, 0.85);
+  color: rgba(244, 241, 234, 0.95);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -379,9 +360,8 @@ body {
   text-align: center;
   z-index: 50;
   pointer-events: none;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
-  white-space: normal;
-  max-width: 80vw;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+  white-space: nowrap;
 }
 
 #timeline-dial {
@@ -822,6 +802,11 @@ body {
   line-height: 1.5;
   font-style: italic;
 }
+
+/* I content-div degli overlay non devono occupare spazio quando nascosti */
+.diary-content.hidden,
+.calendario-content.hidden,
+.postit-content.hidden { display: none !important; }
 
 /* Schermi molto bassi (landscape su telefoni piccoli) */
 @media (max-height: 600px) {

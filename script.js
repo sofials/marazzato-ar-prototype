@@ -476,9 +476,10 @@ document.addEventListener("DOMContentLoaded", () => {
       activeTarget = 'disegno';
       showUI();
       syncActiveTarget();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'disegno' }));
     });
     targetDisegno.addEventListener('targetLost', () => {
-      if (activeTarget === 'disegno') { activeTarget = null; hideUI(); }
+      if (activeTarget === 'disegno') { activeTarget = null; hideUI(); document.dispatchEvent(new CustomEvent('mm-target', { detail: null })); }
     });
   }
   if (targetCalendario) {
@@ -874,6 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Tap su canvas AR per aprire overlay diario
   sceneEl.addEventListener('touchstart', (e) => {
+    if (dial.classList.contains('hidden')) return;
     if (activeTarget !== 'diario') return;
     if (!diaryOverlay.classList.contains('hidden')) return;
     if (dial.contains(e.target)) return;
@@ -882,6 +884,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Tap su canvas AR per aprire overlay calendario
   sceneEl.addEventListener('touchstart', (e) => {
+    if (dial.classList.contains('hidden')) return;
     if (activeTarget !== 'calendario') return;
     if (!calendarioOverlay.classList.contains('hidden')) return;
     if (dial.contains(e.target)) return;
@@ -890,6 +893,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Tap su canvas AR per aprire overlay rubrica/post-it
   sceneEl.addEventListener('touchstart', (e) => {
+    if (dial.classList.contains('hidden')) return;
     if (activeTarget !== 'postit') return;
     if (!postitOverlay.classList.contains('hidden')) return;
     if (dial.contains(e.target)) return;
@@ -921,19 +925,24 @@ document.addEventListener("DOMContentLoaded", () => {
     future:  Object.assign(defaultState({ py: 1.0,  s: 2.0 }), { w: 1.25, h: 1.40 }),
   };
   const diarioStates = {
-    past:    defaultState(),
+    past:    defaultState({ px: -3.80, rx: 90, s: 1.4 }),
     present: defaultState(),
-    future:  defaultState(),
+    future:  defaultState({ px: -3.80, rx: 90, s: 1.4 }),
   };
   const libroStates = {
-    past:    defaultState(),
-    present: defaultState(),
-    future:  defaultState(),
+    past:    defaultState({ px: -3.80, rx: 90, s: 1.4 }),
+    present: defaultState({ px: -3.80, rx: 90, s: 1.4 }),
+    future:  defaultState({ px: -3.80, rx: 90, s: 1.4 }),
   };
   const postitStates = {
-    past:    defaultState(),
-    present: defaultState(),
-    future:  defaultState(),
+    past:    defaultState({ px: -2.45, rx: 60, s: 0.8 }),
+    present: defaultState({ px: -2.45, rx: 60, s: 0.8 }),
+    future:  defaultState({ px: -3.3,  rx: 90, s: 1.2 }),
+  };
+  const disegnoStates = {
+    past:    Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
+    present: Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
+    future:  Object.assign(defaultState({ py: 1.0, s: 2.5 }), { w: 1.2, h: 0.8 }),
   };
 
   try {
@@ -949,6 +958,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (l) Object.assign(libroStates, JSON.parse(l));
     const p = localStorage.getItem('postit-debug');
     if (p) Object.assign(postitStates, JSON.parse(p));
+    const ds = localStorage.getItem('disegno-debug');
+    if (ds) Object.assign(disegnoStates, JSON.parse(ds));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -960,6 +971,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'germoglio') return germoglioState;
     if (activeDbgTarget === 'vaso')      return vasoStates[activeTimeline];
     if (activeDbgTarget === 'calendario') return calendarioStates[activeTimeline];
+    if (activeDbgTarget === 'disegno')   return disegnoStates[activeTimeline];
     if (activeDbgTarget === 'diario')    return diarioStates[activeTimeline];
     if (activeDbgTarget === 'libro')     return libroStates[activeTimeline];
     if (activeDbgTarget === 'postit')    return postitStates[activeTimeline];
@@ -970,6 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'germoglio') return document.getElementById('plant-model');
     if (activeDbgTarget === 'vaso')      return document.getElementById(`vase-${activeTimeline}`);
     if (activeDbgTarget === 'calendario') return document.getElementById('calendario-wrapper');
+    if (activeDbgTarget === 'disegno')   return document.getElementById('drawing-wrapper');
     if (activeDbgTarget === 'diario') {
       const ids = activeTimeline === 'present'
         ? [`diario-present-model`]
@@ -1010,6 +1023,13 @@ document.addEventListener("DOMContentLoaded", () => {
         plane.setAttribute('height', state.h);
       }
     }
+    if (activeDbgTarget === 'disegno') {
+      const plane = document.getElementById('drawing-plane');
+      if (plane) {
+        plane.setAttribute('width',  state.w);
+        plane.setAttribute('height', state.h);
+      }
+    }
   }
 
   function renderDisplay() {
@@ -1037,6 +1057,11 @@ document.addEventListener("DOMContentLoaded", () => {
       renderDisplay();
     } else if (activeDbgTarget === 'calendario') {
       label.textContent       = `📅 CALENDARIO — ${timelineLabels[activeTimeline]}`;
+      controls.style.display  = 'block';
+      planeDims.style.display = 'block';
+      renderDisplay();
+    } else if (activeDbgTarget === 'disegno') {
+      label.textContent       = `🎨 DISEGNO — ${timelineLabels[activeTimeline]}`;
       controls.style.display  = 'block';
       planeDims.style.display = 'block';
       renderDisplay();
@@ -1069,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener('mm-timeline', e => {
     activeTimeline = e.detail;
-    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario' || activeDbgTarget === 'libro' || activeDbgTarget === 'postit') {
+    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'disegno' || activeDbgTarget === 'diario' || activeDbgTarget === 'libro' || activeDbgTarget === 'postit') {
       updateContext();
       applyToModel();
     }
@@ -1107,6 +1132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('germoglio-debug',  JSON.stringify(germoglioState));
     localStorage.setItem('vaso-debug',       JSON.stringify(vasoStates));
     localStorage.setItem('calendario-debug', JSON.stringify(calendarioStates));
+    localStorage.setItem('disegno-debug',    JSON.stringify(disegnoStates));
     localStorage.setItem('diario-debug',     JSON.stringify(diarioStates));
     localStorage.setItem('libro-debug',      JSON.stringify(libroStates));
     localStorage.setItem('postit-debug',     JSON.stringify(postitStates));
@@ -1128,6 +1154,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     ['past', 'present', 'future'].forEach(t => {
       text += `=== CALENDARIO ${timelineLabels[t]} ===\n${fmtPlane(calendarioStates[t])}\n\n`;
+    });
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== DISEGNO ${timelineLabels[t]} ===\n${fmtPlane(disegnoStates[t])}\n\n`;
     });
     ['past', 'present', 'future'].forEach(t => {
       text += `=== DIARIO ${timelineLabels[t]} ===\n${fmt(diarioStates[t])}\n\n`;
@@ -1169,10 +1198,22 @@ document.addEventListener("DOMContentLoaded", () => {
     calWrapper.setAttribute('position', `${cs.px} ${cs.py} ${cs.pz}`);
     calWrapper.setAttribute('rotation', `${cs.rx} ${cs.ry} ${cs.rz}`);
     calWrapper.setAttribute('scale',    `${cs.s} ${cs.s} ${cs.s}`);
-    const plane = document.getElementById('calendario-plane');
-    if (plane) {
-      plane.setAttribute('width',  cs.w);
-      plane.setAttribute('height', cs.h);
+    const calPlane = document.getElementById('calendario-plane');
+    if (calPlane) {
+      calPlane.setAttribute('width',  cs.w);
+      calPlane.setAttribute('height', cs.h);
+    }
+  }
+  const drawWrapper = document.getElementById('drawing-wrapper');
+  if (drawWrapper) {
+    const ds = disegnoStates['present'];
+    drawWrapper.setAttribute('position', `${ds.px} ${ds.py} ${ds.pz}`);
+    drawWrapper.setAttribute('rotation', `${ds.rx} ${ds.ry} ${ds.rz}`);
+    drawWrapper.setAttribute('scale',    `${ds.s} ${ds.s} ${ds.s}`);
+    const drawPlane = document.getElementById('drawing-plane');
+    if (drawPlane) {
+      drawPlane.setAttribute('width',  ds.w);
+      drawPlane.setAttribute('height', ds.h);
     }
   }
 
