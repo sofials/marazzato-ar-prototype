@@ -63,6 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
     future:  [document.getElementById('diario-future-model')],
   };
 
+  const targetPostit = document.getElementById('ar-target-postit');
+  const postits = {
+    past:    [document.getElementById('postit-past-model-a'),    document.getElementById('postit-past-model-b')],
+    present: [document.getElementById('postit-present-model-a'), document.getElementById('postit-present-model-b')],
+    future:  [document.getElementById('postit-future-model-a'),  document.getElementById('postit-future-model-b')],
+  };
+
   const targetLibro = document.getElementById('ar-target-libro');
   const libros = {
     past:    [document.getElementById('libro-past-model')],
@@ -326,6 +333,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (targetPostit) {
+    targetPostit.addEventListener('targetFound', () => {
+      console.log('📌 TARGET 5 (postit) trovato');
+      activeTarget = 'postit';
+      showUI();
+      syncActiveTarget();
+      document.dispatchEvent(new CustomEvent('mm-target', { detail: 'postit' }));
+    });
+    targetPostit.addEventListener('targetLost', () => {
+      if (activeTarget === 'postit') {
+        activeTarget = null;
+        hideUI();
+        document.dispatchEvent(new CustomEvent('mm-target', { detail: null }));
+      }
+    });
+  }
+
   if (targetLibro) {
     targetLibro.addEventListener('targetFound', () => {
       console.log('📚 TARGET 7 (libro) trovato');
@@ -418,6 +442,11 @@ document.addEventListener("DOMContentLoaded", () => {
         diaries[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
       });
       diaries[tl].forEach(m => { if (m) setOpacity(m, 1); });
+    } else if (activeTarget === 'postit') {
+      ['past', 'present', 'future'].forEach(t => {
+        postits[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
+      });
+      postits[tl].forEach(m => { if (m) setOpacity(m, 1); });
     } else if (activeTarget === 'libro') {
       ['past', 'present', 'future'].forEach(t => {
         libros[t].forEach(m => { if (m) m.setAttribute('visible', t === tl ? 'true' : 'false'); });
@@ -486,6 +515,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!diaryOverlay.classList.contains('hidden')) closeDiaryOverlay();
       const oldPieces = diaries[oldTimeline];
       const newPieces = diaries[timeline];
+      oldPieces.forEach(m => animateFade(m, true, fadeTime));
+      setTimeout(() => {
+        oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
+        const last = newPieces[newPieces.length - 1];
+        newPieces.forEach(m => {
+          if (!m) return;
+          m.setAttribute('visible', 'true');
+          setOpacity(m, 0);
+          animateFade(m, false, fadeTime, m === last ? () => { isFading = false; } : null);
+        });
+        if (!last) isFading = false;
+      }, fadeTime);
+    } else if (activeTarget === 'postit') {
+      const oldPieces = postits[oldTimeline];
+      const newPieces = postits[timeline];
       oldPieces.forEach(m => animateFade(m, true, fadeTime));
       setTimeout(() => {
         oldPieces.forEach(m => { if (m) m.setAttribute('visible', 'false'); });
@@ -623,6 +667,11 @@ document.addEventListener("DOMContentLoaded", () => {
     present: defaultState(),
     future:  defaultState(),
   };
+  const postitStates = {
+    past:    defaultState(),
+    present: defaultState(),
+    future:  defaultState(),
+  };
 
   try {
     const g = localStorage.getItem('germoglio-debug');
@@ -635,6 +684,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (d) Object.assign(diarioStates, JSON.parse(d));
     const l = localStorage.getItem('libro-debug');
     if (l) Object.assign(libroStates, JSON.parse(l));
+    const p = localStorage.getItem('postit-debug');
+    if (p) Object.assign(postitStates, JSON.parse(p));
   } catch (e) {}
 
   let activeDbgTarget = null;
@@ -648,6 +699,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeDbgTarget === 'calendario') return calendarioStates[activeTimeline];
     if (activeDbgTarget === 'diario')    return diarioStates[activeTimeline];
     if (activeDbgTarget === 'libro')     return libroStates[activeTimeline];
+    if (activeDbgTarget === 'postit')    return postitStates[activeTimeline];
     return null;
   }
 
@@ -668,6 +720,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ? [`libro-future-model-a`, `libro-future-model-b`]
         : [`libro-${activeTimeline}-model`];
       return ids.map(id => document.getElementById(id)).filter(Boolean);
+    }
+    if (activeDbgTarget === 'postit') {
+      return [`postit-${activeTimeline}-model-a`, `postit-${activeTimeline}-model-b`]
+        .map(id => document.getElementById(id)).filter(Boolean);
     }
     return null;
   }
@@ -729,6 +785,11 @@ document.addEventListener("DOMContentLoaded", () => {
       controls.style.display  = 'block';
       planeDims.style.display = 'none';
       renderDisplay();
+    } else if (activeDbgTarget === 'postit') {
+      label.textContent       = `📌 POST-IT — ${timelineLabels[activeTimeline]}`;
+      controls.style.display  = 'block';
+      planeDims.style.display = 'none';
+      renderDisplay();
     } else {
       label.textContent       = '— nessun marker —';
       controls.style.display  = 'none';
@@ -743,7 +804,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener('mm-timeline', e => {
     activeTimeline = e.detail;
-    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario' || activeDbgTarget === 'libro') {
+    if (activeDbgTarget === 'vaso' || activeDbgTarget === 'calendario' || activeDbgTarget === 'diario' || activeDbgTarget === 'libro' || activeDbgTarget === 'postit') {
       updateContext();
       applyToModel();
     }
@@ -783,6 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem('calendario-debug', JSON.stringify(calendarioStates));
     localStorage.setItem('diario-debug',     JSON.stringify(diarioStates));
     localStorage.setItem('libro-debug',      JSON.stringify(libroStates));
+    localStorage.setItem('postit-debug',     JSON.stringify(postitStates));
 
     const fmt = (s) =>
       `position="${s.px.toFixed(2)} ${s.py.toFixed(2)} ${s.pz.toFixed(2)}"\n` +
@@ -807,6 +869,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     ['past', 'present', 'future'].forEach(t => {
       text += `=== LIBRO ${timelineLabels[t]} ===\n${fmt(libroStates[t])}\n\n`;
+    });
+    ['past', 'present', 'future'].forEach(t => {
+      text += `=== POST-IT ${timelineLabels[t]} ===\n${fmt(postitStates[t])}\n\n`;
     });
 
     document.getElementById('dbg-modal-text').textContent = text.trim();
@@ -868,6 +933,19 @@ document.addEventListener("DOMContentLoaded", () => {
       ? [`libro-future-model-a`, `libro-future-model-b`]
       : [`libro-${t}-model`];
     const s = libroStates[t];
+    ids.forEach(id => {
+      const model = document.getElementById(id);
+      if (model) {
+        model.setAttribute('position', `${s.px} ${s.py} ${s.pz}`);
+        model.setAttribute('rotation', `${s.rx} ${s.ry} ${s.rz}`);
+        model.setAttribute('scale',    `${s.s} ${s.s} ${s.s}`);
+      }
+    });
+  });
+
+  ['past', 'present', 'future'].forEach(t => {
+    const ids = [`postit-${t}-model-a`, `postit-${t}-model-b`];
+    const s = postitStates[t];
     ids.forEach(id => {
       const model = document.getElementById(id);
       if (model) {
