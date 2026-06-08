@@ -918,7 +918,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const calendarioStates = {
     past:    Object.assign(defaultState({ py: 0.60, s: 1.8 }), { w: 1.05, h: 1.55 }),
     present: Object.assign(defaultState({ py: 0.60, s: 1.9 }), { w: 1.25, h: 1.70 }),
-    future:  Object.assign(defaultState({ py: 1.0,  s: 2.0 }), { w: 1.25, h: 1.40 }),
+    future:  Object.assign(defaultState({ py: 0.45, s: 2.0 }), { w: 1.25, h: 1.90 }),
   };
   const diarioStates = {
     past:    defaultState({ px: -3.80, rx: 90, s: 1.4 }),
