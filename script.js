@@ -923,7 +923,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const diarioStates = {
     past:    defaultState({ px: -3.80, rx: 90, s: 1.4 }),
-    present: defaultState(),
+    present: defaultState({ px: -3.80, rx: 90, s: 1.4 }),
     future:  defaultState({ px: -3.80, rx: 90, s: 1.4 }),
   };
   const libroStates = {
